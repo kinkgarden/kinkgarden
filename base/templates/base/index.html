@@ -1,5 +1,18 @@
 {% extends "base/base.html" %}
 
+{% block extra_headers %}
+<meta name="description" content="kink.garden is a website where you can make a list of your kinks that you can share with friends, the world, or no one but yourself!" />
+
+<!-- Twitter Card data -->
+<meta name="twitter:card" content="summary">
+
+<!-- Open Graph data -->
+<meta property="og:title" content="kink.garden" />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="https://kink.garden" />
+<meta property="og:description" content="kink.garden is a website where you can make a list of your kinks that you can share with friends, the world, or no one but yourself!" />
+{% endblock %}
+
 {% block content %}
 <h1>kink.garden</h1>
 <h2>share your kinks with your friends, or the world</h2>
