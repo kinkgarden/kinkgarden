@@ -14,7 +14,13 @@ class IndexView(generic.ListView):
 
 class CategoryView(generic.DetailView):
     model = KinkCategory
+    context_object_name = 'category'
     template_name = 'kinks/category.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['kinks'] = context['category'].kink_set.order_by('name')
+        return context
 
 
 class DetailView(generic.DetailView):
