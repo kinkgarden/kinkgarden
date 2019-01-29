@@ -3,7 +3,11 @@
 {% block content %}
 <h1>kink.garden</h1>
 <h2>share your kinks with your friends, or the world</h2>
-<p>kink.garden is a work in progress. coming soon, hopefully! we have {{ kink_count }} kink{{ kink_count | pluralize }} in our database right now.</p>
+<p>kink.garden is a work in progress. coming soon, hopefully!
+    {% if kink_count > 0 %}
+    we have {{ kink_count }} kink{{ kink_count | pluralize }} in our database right now.
+    {% endif %}
+</p>
 <p>in the meantime, feel free to follow us on <a href="https://twitter.com/kinkgarden">Twitter</a>.</p>
 <h4>what is this?</h4>
 <p>kink.garden is a project that aims to create a website where you can make a <b>list of your kinks</b> that you can
