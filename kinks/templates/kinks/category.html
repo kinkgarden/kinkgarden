@@ -1,0 +1,7 @@
+<h1>{{ category.name }}</h1>
+<p>{{ category.description }}</p>
+<ul>
+{% for kink in kinks %}
+    <li><a href="{% url 'kinks:detail' kink.id %}">{{ kink.name }}</a></li>
+{% endfor %}
+</ul>

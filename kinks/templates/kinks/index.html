@@ -1,0 +1,9 @@
+{% if category_list %}
+    <ul>
+    {% for category in category_list %}
+        <li><a href="{% url 'kinks:category' category.id %}">{{ category.name }}</a></li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>No kink categories are available.</p>
+{% endif %}
