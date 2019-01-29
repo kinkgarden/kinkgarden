@@ -26,7 +26,7 @@ urlpatterns = [
     <title>kink.garden - coming soon</title>
     <style>
         body {
-            width: 35em;
+            width: 40em;
             margin: 0 auto;
             font-family: Tahoma, Verdana, Arial, sans-serif;
         }
