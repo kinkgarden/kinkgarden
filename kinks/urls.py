@@ -4,7 +4,7 @@ from . import views
 
 app_name = 'kinks'
 urlpatterns = [
-    path('', views.index, name='index'),
-    path('category/<int:category_id>/', views.category_detail, name='category'),
-    path('<int:kink_id>/', views.detail, name='detail'),
+    path('', views.IndexView.as_view(), name='index'),
+    path('category/<int:pk>/', views.CategoryView.as_view(), name='category'),
+    path('<int:pk>/', views.DetailView.as_view(), name='detail'),
 ]
