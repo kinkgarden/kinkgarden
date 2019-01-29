@@ -117,3 +117,6 @@ dmypy.json
 
 # pycharm metadata
 /.idea
+
+# deployment enabling
+/deploy
