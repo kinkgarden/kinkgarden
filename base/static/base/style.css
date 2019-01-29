@@ -1,0 +1,10 @@
+body {
+    width: 40em;
+    margin: 0 auto;
+    font-family: Tahoma, Verdana, Arial, sans-serif;
+
+    line-height: 1.6;
+    color: #222222;
+    background-color: #EEEEEE;
+    font-size: 16px;
+}

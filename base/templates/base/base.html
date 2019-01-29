@@ -1,16 +1,11 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{% block title %}kink.garden{% endblock %}</title>
-    <style>
-        body {
-            width: 40em;
-            margin: 0 auto;
-            font-family: Tahoma, Verdana, Arial, sans-serif;
-        }
-    </style>
+    <link rel="stylesheet" type="text/css" href="{% static 'base/style.css' %}">
 </head>
 <body>
 <header>
