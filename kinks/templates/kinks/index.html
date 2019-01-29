@@ -1,3 +1,7 @@
+{% extends "base/base.html" %}
+
+{% block content %}
+<h1>Kink Categories</h1>
 {% if category_list %}
     <ul>
     {% for category in category_list %}
@@ -7,3 +11,4 @@
 {% else %}
     <p>No kink categories are available.</p>
 {% endif %}
+{% endblock %}

@@ -1,3 +1,6 @@
+{% extends "base/base.html" %}
+
+{% block content %}
 <h1>{{ category.name }}</h1>
 <p>{{ category.description }}</p>
 <ul>
@@ -5,3 +8,4 @@
     <li><a href="{% url 'kinks:detail' kink.id %}">{{ kink.name }}</a></li>
 {% endfor %}
 </ul>
+{% endblock %}
