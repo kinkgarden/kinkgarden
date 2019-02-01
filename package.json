@@ -1,0 +1,16 @@
+{
+  "name": "kinkgarden",
+  "version": "1.0.0",
+  "description": "",
+  "private": true,
+  "scripts": {
+    "build": "cd editor && webpack --config webpack.config.js --progress --colors",
+    "watch": "cd editor && webpack --config webpack.config.js --progress --colors --watch"
+  },
+  "devDependencies": {
+    "svelte-loader": "^2.12.0",
+    "webpack": "^4.29.0",
+    "webpack-bundle-tracker": "^0.4.2-beta",
+    "webpack-cli": "^3.2.1"
+  }
+}

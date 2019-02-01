@@ -20,5 +20,6 @@ from django.http import HttpResponse
 urlpatterns = [
     path('', include('base.urls')),
     path('kinks/', include('kinks.urls')),
+    path('editor/', include('editor.urls')),
     path('admin/', admin.site.urls),
 ]

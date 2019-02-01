@@ -120,3 +120,6 @@ dmypy.json
 
 # deployment enabling
 /deploy
+
+# npm stuff
+/node_modules

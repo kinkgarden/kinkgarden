@@ -31,12 +31,14 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 INSTALLED_APPS = [
     'base.apps.BaseConfig',
     'kinks.apps.KinksConfig',
+    'editor.apps.EditorConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'webpack_loader',
 ]
 
 MIDDLEWARE = [
@@ -69,6 +71,13 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'kinkgarden.wsgi.application'
+
+WEBPACK_LOADER = {
+    'DEFAULT': {
+        'BUNDLE_DIR_NAME': 'editor/',
+        'STATS_FILE': os.path.join(BASE_DIR, 'editor', 'webpack-stats.json'),
+    }
+}
 
 
 # Database
