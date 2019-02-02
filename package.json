@@ -8,13 +8,13 @@
     "watch": "cd editor && webpack --config webpack.config.js --progress --colors --watch"
   },
   "devDependencies": {
-    "svelte": "^2.16.0",
-    "svelte-loader": "^2.12.0",
-    "webpack": "^4.29.0",
-    "webpack-bundle-tracker": "^0.4.2-beta",
-    "webpack-cli": "^3.2.1"
+    "svelte": "2.16.0",
+    "svelte-loader": "2.12.0",
+    "webpack": "4.29.0",
+    "webpack-bundle-tracker": "0.4.2-beta",
+    "webpack-cli": "3.2.1"
   },
   "dependencies": {
-    "dragula": "^3.7.2"
+    "dragula": "3.7.2"
   }
 }
