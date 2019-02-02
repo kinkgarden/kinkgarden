@@ -5,6 +5,8 @@ var BundleTracker = require('webpack-bundle-tracker');
 module.exports = {
     context: __dirname,
 
+    devtool: process.env.NODE_ENV === 'development' && "inline-source-map",
+
     entry: './assets/index',
 
     output: {

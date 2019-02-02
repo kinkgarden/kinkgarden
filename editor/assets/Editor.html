@@ -1,0 +1,142 @@
+<article>
+    <aside>
+        <div class="category-menu">
+            <h2>Categories</h2>
+            {#await categories}
+            <p class="loading">loading...</p>
+            {:then categories}
+            <ul>
+                <li class:selected="is_selected(null)" on:click="select_category(null)">all kinks</li>
+                <li class:selected="is_selected('custom')" on:click="select_category('custom')">custom kinks</li>
+            {#each categories as category}
+                <li class:selected="is_selected(category.id)" on:click="select_category(category.id)">{category.name}</li>
+            {/each}
+            </ul>
+            {:catch error}
+            <p class="error">couldn't load??</p>
+            {/await}
+        </div>
+        <div class="kink-menu">
+            <h2>Kinks</h2>
+            {#await selected_kinks}
+            <p class="loading">loading...</p>
+            {:then kinks}
+            <div class="kinks menu-kinks">
+                {#each kinks as kink}
+                <div class="kink" data-id={kink.id}>
+                    <p title={kink.description}>{kink.name}</p>
+                    <p class="description">{kink.description}</p>
+                </div>
+                {/each}
+            </div>
+            {:catch error}
+            <p class="error">couldn't load??</p>
+            {/await}
+        </div>
+    </aside>
+    {#each columns as column, i}
+    <div class="column">
+        <h2>{column.name}</h2>
+        <div class="kinks" data-kink-column={i}>
+            {#each column.kinks as kink}
+            <div class="kink" data-id={kink.id}>
+                <p title={kink.description}>{kink.name}</p>
+                <p class="description">{kink.description}</p>
+            </div>
+            {/each}
+        </div>
+    </div>
+    {/each}
+</article>
+
+<script>
+    import dragula from 'dragula';
+
+    export default {
+        data() {
+            return {
+                columns: [
+                    {
+                        "name": "S tier",
+                        "kinks": [],
+                    },
+                    {
+                        "name": "good shit",
+                        "kinks": [],
+                    },
+                    {
+                        "name": "okay i guess",
+                        "kinks": [],
+                    },
+                    {
+                        "name": "nnnnnnope",
+                        "kinks": [],
+                    },
+                ],
+                db_promise: fetch('/kinks/', {
+                    headers: {
+                        'Accept': 'application/json',
+                    }
+                }).then(response => response.json()),
+                selected_category: null,
+            }
+        },
+
+        computed: {
+            categories: ({ db_promise }) => db_promise.then(db_data => db_data.categories),
+            selected_kinks: ({ db_promise, selected_category }) => db_promise.then(db_data => {
+                if (selected_category === null) {
+                    return db_data.kinks;
+                } else if (selected_category === 'custom') {
+                    // TODO what do
+                    return [];
+                } else {
+                    return db_data.kinks.filter(k => k.category_id === selected_category);
+                }
+            }),
+            is_selected: ({ selected_category }) => (c) => selected_category === c,
+        },
+
+        methods: {
+            select_category(category) {
+                this.set({selected_category: category});
+            },
+        },
+
+        onstate({ current }) {
+            console.log(current);
+        },
+
+        oncreate() {
+            let drag = dragula({
+                isContainer(el) {
+                    return el.classList.contains('kinks');
+                },
+
+                copy(el, source) {
+                    return source.classList.contains('menu-kinks');
+                },
+
+                accepts(el, target) {
+                    return !target.classList.contains('menu-kinks');
+                },
+
+                removeOnSpill: true,
+            });
+
+            drag.on('drop', (el, target, source) => {
+                const kinkID = parseInt(el.dataset.id, 10);
+                let { db_promise, columns } = this.get();
+                db_promise.then(({kinks}) => {
+                    if (!source.classList.contains('menu-kinks')) {
+                        const sourceColumn = source.dataset.kinkColumn;
+                        columns[sourceColumn].kinks = columns[sourceColumn].kinks.filter(k => k.id !== kinkID);
+                    }
+                    const targetColumn = target.dataset.kinkColumn;
+                    columns[targetColumn].kinks = columns[targetColumn].kinks.concat(kinks.filter(k => k.id === kinkID));
+                });
+                this.set({ columns });
+            })
+        },
+    };
+</script>

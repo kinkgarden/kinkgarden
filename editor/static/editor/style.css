@@ -1,0 +1,84 @@
+main {
+
+}
+
+article {
+    position: relative;
+    left: calc((var(--body-width) - 100vw) / 2);
+    display: flex;
+    flex-flow: row nowrap;
+    width: 100vw;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+article > aside {
+    flex: 2 0 0;
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: space-between;
+    align-items: stretch;
+}
+
+article > aside > div {
+    flex: 1 0 0;
+}
+
+article > div.column {
+    flex: 1 0 0;
+}
+
+.category-menu ul {
+    list-style: none;
+    padding-left: 0;
+}
+
+.category-menu ul li {
+    padding: 0.5em;
+    cursor: pointer;
+}
+
+.category-menu ul li:hover {
+    background-color: rgba(255, 255, 255, 0.8);
+}
+
+.category-menu ul li.selected {
+    background-color: rgba(255, 255, 255, 0.5);
+}
+
+.kinks {
+    min-height: 1em;
+    background-color: rgba(255, 255, 255, 0.7);
+}
+
+.kinks p.description {
+    display: none;
+}
+
+.kinks.menu-kinks p.description {
+    display: unset;
+}
+
+/* from Dragula */
+.gu-mirror {
+    position: fixed !important;
+    margin: 0 !important;
+    z-index: 9999 !important;
+    opacity: 0.8;
+    -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=80)";
+    filter: alpha(opacity=80);
+}
+.gu-hide {
+    display: none !important;
+}
+.gu-unselectable {
+    -webkit-user-select: none !important;
+    -moz-user-select: none !important;
+    -ms-user-select: none !important;
+    user-select: none !important;
+}
+.gu-transit {
+    opacity: 0.2;
+    -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=20)";
+    filter: alpha(opacity=20);
+}

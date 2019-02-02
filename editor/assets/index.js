@@ -1,6 +1,5 @@
-import App from './App.html';
+import Editor from './Editor.html';
 
-const app = new App({
+const app = new Editor({
 	target: document.querySelector('main'),
-	data: { name: 'world' }
 });

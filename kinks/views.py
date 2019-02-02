@@ -1,5 +1,6 @@
 from django.shortcuts import get_object_or_404, render
 from django.views import generic
+from django.http import JsonResponse
 
 from .models import KinkCategory, Kink
 
@@ -10,6 +11,18 @@ class IndexView(generic.ListView):
 
     def get_queryset(self):
         return KinkCategory.objects.order_by('name')
+
+    def render_to_response(self, context, **response_kwargs):
+        if self.request.META['HTTP_ACCEPT'] == 'application/json':
+            return JsonResponse(
+                {
+                    'categories': list(KinkCategory.objects.values()),
+                    'kinks': list(Kink.objects.values()),
+                },
+                **response_kwargs
+            )
+        else:
+            return super().render_to_response(context, **response_kwargs)
 
 
 class CategoryView(generic.DetailView):
