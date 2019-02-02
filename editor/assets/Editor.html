@@ -34,6 +34,9 @@
             {/await}
         </div>
     </aside>
+    {#await full_columns}
+    <p class="loading">loading...</p>
+    {:then columns}
     {#each columns as column, i}
     <div class="column">
         <h2>{column.name}</h2>
@@ -47,6 +50,9 @@
         </div>
     </div>
     {/each}
+    {:catch error}
+    <p class="error">couldn't load??</p>
+    {/await}
 </article>
 
 <script>
@@ -54,25 +60,32 @@
 
     export default {
         data() {
+            let columns = [
+                {
+                    "name": "S tier",
+                    "kinks": [],
+                },
+                {
+                    "name": "good shit",
+                    "kinks": [],
+                },
+                {
+                    "name": "okay i guess",
+                    "kinks": [],
+                },
+                {
+                    "name": "nnnnnnope",
+                    "kinks": [],
+                },
+            ];
+            if (location.hash.startsWith('#')) {
+                let hash = decodeURI(location.hash.substring(1));
+                columns = JSON.parse(hash);
+                columns = columns.map(([name, ...kinks]) => ({name, kinks}));
+                console.log('Restoring', columns);
+            }
             return {
-                columns: [
-                    {
-                        "name": "S tier",
-                        "kinks": [],
-                    },
-                    {
-                        "name": "good shit",
-                        "kinks": [],
-                    },
-                    {
-                        "name": "okay i guess",
-                        "kinks": [],
-                    },
-                    {
-                        "name": "nnnnnnope",
-                        "kinks": [],
-                    },
-                ],
+                columns,
                 db_promise: fetch('/kinks/', {
                     headers: {
                         'Accept': 'application/json',
@@ -95,6 +108,15 @@
                 }
             }),
             is_selected: ({ selected_category }) => (c) => selected_category === c,
+            full_columns: ({ columns, db_promise }) => db_promise.then(db_data => {
+                return columns.map(column => ({
+                    name: column.name,
+                    kinks: column.kinks.map(kinkID => db_data.kinks.find(k => k.id === kinkID)),
+                }))
+            }),
+            url: ({ columns }) => {
+                return JSON.stringify(columns.map(({ kinks, name }) => ([name, ...kinks])));
+            }
         },
 
         methods: {
@@ -104,7 +126,9 @@
         },
 
         onstate({ current }) {
-            console.log(current);
+            let url = current.url;
+            console.log(url);
+            history.replaceState(null, "", "#" + url);
         },
 
         oncreate() {
@@ -125,18 +149,18 @@
             });
 
             drag.on('drop', (el, target, source) => {
-                const kinkID = parseInt(el.dataset.id, 10);
-                let { db_promise, columns } = this.get();
-                db_promise.then(({kinks}) => {
+                if (source !== target) {
+                    const kinkID = parseInt(el.dataset.id, 10);
+                    let {columns} = this.get();
                     if (!source.classList.contains('menu-kinks')) {
                         const sourceColumn = source.dataset.kinkColumn;
                         columns[sourceColumn].kinks = columns[sourceColumn].kinks.filter(k => k.id !== kinkID);
                     }
                     const targetColumn = target.dataset.kinkColumn;
-                    columns[targetColumn].kinks = columns[targetColumn].kinks.concat(kinks.filter(k => k.id === kinkID));
-                });
-                this.set({ columns });
-            })
+                    columns[targetColumn].kinks = columns[targetColumn].kinks.concat([kinkID]);
+                    setTimeout(() => this.set({columns}));
+                }
+            });
         },
     };
 </script>
