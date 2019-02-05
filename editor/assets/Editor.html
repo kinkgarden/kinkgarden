@@ -1,59 +1,57 @@
-<article>
-    <aside>
-        <div class="category-menu">
-            <h2>Categories</h2>
-            {#await categories}
-            <p class="loading">loading...</p>
-            {:then categories}
-            <ul>
-                <li class:selected="is_selected(null)" on:click="select_category(null)">all kinks</li>
-                <li class:selected="is_selected('custom')" on:click="select_category('custom')">custom kinks</li>
-            {#each categories as category}
-                <li class:selected="is_selected(category.id)" on:click="select_category(category.id)">{category.name}</li>
-            {/each}
-            </ul>
-            {:catch error}
-            <p class="error">couldn't load??</p>
-            {/await}
-        </div>
-        <div class="kink-menu">
-            <h2>Kinks</h2>
-            {#await selected_kinks}
-            <p class="loading">loading...</p>
-            {:then kinks}
-            <div class="kinks menu-kinks">
-                {#each kinks as kink}
-                <div class="kink" data-id={kink.id}>
-                    <p title={kink.description}>{kink.name}</p>
-                    <p class="description">{kink.description}</p>
-                </div>
-                {/each}
-            </div>
-            {:catch error}
-            <p class="error">couldn't load??</p>
-            {/await}
-        </div>
-    </aside>
-    {#await full_columns}
-    <p class="loading">loading...</p>
-    {:then columns}
-    {#each columns as column, i}
-    <div class="column">
-        <h2>{column.name}</h2>
-        <div class="kinks" data-kink-column={i}>
-            {#each column.kinks as kink}
+<aside>
+    <div class="category-menu">
+        <h2>Categories</h2>
+        {#await categories}
+        <p class="loading">loading...</p>
+        {:then categories}
+        <ul>
+            <li class:selected="is_selected(null)" on:click="select_category(null)">all kinks</li>
+            <li class:selected="is_selected('custom')" on:click="select_category('custom')">custom kinks</li>
+        {#each categories as category}
+            <li class:selected="is_selected(category.id)" on:click="select_category(category.id)">{category.name}</li>
+        {/each}
+        </ul>
+        {:catch error}
+        <p class="error">couldn't load??</p>
+        {/await}
+    </div>
+    <div class="kink-menu">
+        <h2>Kinks</h2>
+        {#await selected_kinks}
+        <p class="loading">loading...</p>
+        {:then kinks}
+        <div class="kinks menu-kinks">
+            {#each kinks as kink}
             <div class="kink" data-id={kink.id}>
                 <p title={kink.description}>{kink.name}</p>
                 <p class="description">{kink.description}</p>
             </div>
             {/each}
         </div>
+        {:catch error}
+        <p class="error">couldn't load??</p>
+        {/await}
     </div>
-    {/each}
-    {:catch error}
-    <p class="error">couldn't load??</p>
-    {/await}
-</article>
+</aside>
+{#await full_columns}
+<p class="loading">loading...</p>
+{:then columns}
+{#each columns as column, i}
+<div class="column">
+    <h2>{column.name}</h2>
+    <div class="kinks" data-kink-column={i}>
+        {#each column.kinks as kink}
+        <div class="kink" data-id={kink.id}>
+            <p title={kink.description}>{kink.name}</p>
+            <p class="description">{kink.description}</p>
+        </div>
+        {/each}
+    </div>
+</div>
+{/each}
+{:catch error}
+<p class="error">couldn't load??</p>
+{/await}
 
 <script>
     import dragula from 'dragula';
