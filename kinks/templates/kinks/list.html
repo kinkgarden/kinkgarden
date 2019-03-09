@@ -1,0 +1,24 @@
+{% extends "base/base.html" %}
+{% load static %}
+
+{% block extra_headers %}
+<link rel="stylesheet" type="text/css" href="{% static 'editor/style.css' %}">
+{% endblock %}
+
+{% block content %}
+<article>
+{% for column in columns %}
+    <div class="column">
+        <h2>{{ column.name }}</h2>
+        <div class="kinks">
+        {% for kink in column.kinks %}
+            <div class="kink">
+                <p title="{{ kink.description }}">{{ kink.name }}</p>
+                <p class="description">{{ kink.description }}</p>
+            </div>
+        {% endfor %}
+        </div>
+    </div>
+{% endfor %}
+</article>
+{% endblock %}

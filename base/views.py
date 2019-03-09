@@ -1,12 +1,13 @@
+from django.shortcuts import render
 from django.views import generic
 
 from kinks.models import Kink
+from kinks.views import kink_list_view
 
 
-class HomeView(generic.TemplateView):
-    template_name = "base/index.html"
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['kink_count'] = Kink.objects.filter(custom__exact=False).count()
-        return context
+def home_or_list_view(request):
+    try:
+        return kink_list_view(request)
+    except TypeError:
+        kink_count = Kink.objects.filter(custom__exact=False).count()
+        return render(request, 'base/index.html', {'kink_count': kink_count})
