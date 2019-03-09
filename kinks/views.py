@@ -1,6 +1,4 @@
 import json
-import typing
-from dataclasses import dataclass
 
 from django.http import JsonResponse
 from django.shortcuts import render
@@ -45,10 +43,10 @@ class DetailView(generic.DetailView):
     template_name = 'kinks/kink.html'
 
 
-@dataclass
 class KinkColumn:
-    name: str
-    kinks: typing.List[Kink]
+    def __init__(self, name, kinks):
+        self.name = name
+        self.kinks = kinks
 
     @classmethod
     def deserialize_all(cls, columns):
