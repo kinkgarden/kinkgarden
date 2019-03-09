@@ -3,9 +3,9 @@
 {% load render_bundle from webpack_loader %}
 
 {% block extra_headers %}
-<link rel="stylesheet" type="text/css" href="{% static 'editor/style.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'editor/style.css' %}">
 {% endblock %}
 
 {% block end_of_body %}
-{% render_bundle 'main' %}
+    {% render_bundle 'main' %}
 {% endblock %}
