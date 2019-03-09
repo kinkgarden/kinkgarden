@@ -1,39 +1,5 @@
-html {
-    height: 100%;
-    --page-width: 100vw;
-}
-
-body {
-    height: 100%;
-    display: flex;
-    flex-flow: column nowrap;
-}
-
-body > * {
-    flex: 0 0 auto;
-}
-
-main {
-    flex: 1 0 0;
-    height: 10px;
-    display: flex;
-    flex-flow: column;
-}
-
 .link-box-wrapper input {
     width: 100%;
-}
-
-main > article {
-    flex: 1 0 0;
-    height: 0;
-    position: relative;
-    left: calc((var(--body-width) - var(--page-width)) / 2);
-    display: flex;
-    flex-flow: row nowrap;
-    width: var(--page-width);
-    justify-content: space-between;
-    align-items: flex-start;
 }
 
 main > article > aside {
@@ -49,10 +15,6 @@ main > article > aside > div {
     flex: 1 0 0;
     display: flex;
     flex-flow: column nowrap;
-}
-
-main > article > div.column {
-    flex: 1 0 0;
 }
 
 .category-menu ul {
@@ -73,34 +35,12 @@ main > article > div.column {
     background-color: rgba(255, 255, 255, 0.5);
 }
 
-.kinks {
-    min-height: 1em;
-    background-color: rgba(255, 255, 255, 0.7);
-}
-
 .kinks.menu-kinks {
     overflow-y: auto;
 }
 
-.kinks p.description {
-    display: none;
-}
-
 .kinks.menu-kinks p.description {
     display: unset;
-}
-
-.kink:not(:last-child) {
-    border-bottom: 2px solid black;
-}
-
-.kink p {
-    margin: 0;
-    padding: 0;
-}
-
-.kink p:first-child {
-    font-size: 120%;
 }
 
 /* from Dragula */

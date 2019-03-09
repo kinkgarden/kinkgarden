@@ -1,0 +1,59 @@
+html {
+    height: 100%;
+    --page-width: 100vw;
+}
+
+body {
+    height: 100%;
+    display: flex;
+    flex-flow: column nowrap;
+}
+
+body > * {
+    flex: 0 0 auto;
+}
+
+main {
+    flex: 1 0 0;
+    height: 10px;
+    display: flex;
+    flex-flow: column;
+}
+
+main > article {
+    flex: 1 0 0;
+    height: 0;
+    position: relative;
+    left: calc((var(--body-width) - var(--page-width)) / 2);
+    display: flex;
+    flex-flow: row nowrap;
+    width: var(--page-width);
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+main > article > div.column {
+    flex: 1 0 0;
+}
+
+.kinks {
+    min-height: 1em;
+    background-color: rgba(255, 255, 255, 0.7);
+}
+
+.kinks p.description {
+    display: none;
+}
+
+.kink:not(:last-child) {
+    border-bottom: 2px solid black;
+}
+
+.kink p {
+    margin: 0;
+    padding: 0;
+}
+
+.kink p:first-child {
+    font-size: 120%;
+}
