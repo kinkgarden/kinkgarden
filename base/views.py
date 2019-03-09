@@ -1,5 +1,4 @@
 from django.shortcuts import render
-from django.views import generic
 
 from kinks.models import Kink
 from kinks.views import kink_list_view
