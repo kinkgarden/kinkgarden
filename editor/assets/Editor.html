@@ -1,57 +1,62 @@
-<aside>
-    <div class="category-menu">
-        <h2>Categories</h2>
-        {#await categories}
-        <p class="loading">loading...</p>
-        {:then categories}
-        <ul>
-            <li class:selected="is_selected(null)" on:click="select_category(null)">all kinks</li>
-            <li class:selected="is_selected('custom')" on:click="select_category('custom')">custom kinks</li>
-        {#each categories as category}
-            <li class:selected="is_selected(category.id)" on:click="select_category(category.id)">{category.name}</li>
-        {/each}
-        </ul>
-        {:catch error}
-        <p class="error">couldn't load??</p>
-        {/await}
-    </div>
-    <div class="kink-menu">
-        <h2>Kinks</h2>
-        {#await selected_kinks}
-        <p class="loading">loading...</p>
-        {:then kinks}
-        <div class="kinks menu-kinks">
-            {#each kinks as kink}
+<div class="link-box-wrapper">
+    <input type="text" disabled value={listUrl}>
+</div>
+<article>
+    <aside>
+        <div class="category-menu">
+            <h2>Categories</h2>
+            {#await categories}
+            <p class="loading">loading...</p>
+            {:then categories}
+            <ul>
+                <li class:selected="is_selected(null)" on:click="select_category(null)">all kinks</li>
+                <li class:selected="is_selected('custom')" on:click="select_category('custom')">custom kinks</li>
+            {#each categories as category}
+                <li class:selected="is_selected(category.id)" on:click="select_category(category.id)">{category.name}</li>
+            {/each}
+            </ul>
+            {:catch error}
+            <p class="error">couldn't load??</p>
+            {/await}
+        </div>
+        <div class="kink-menu">
+            <h2>Kinks</h2>
+            {#await selected_kinks}
+            <p class="loading">loading...</p>
+            {:then kinks}
+            <div class="kinks menu-kinks">
+                {#each kinks as kink}
+                <div class="kink" data-id={kink.id}>
+                    <p title={kink.description}>{kink.name}</p>
+                    <p class="description">{kink.description}</p>
+                </div>
+                {/each}
+            </div>
+            {:catch error}
+            <p class="error">couldn't load??</p>
+            {/await}
+        </div>
+    </aside>
+    {#await full_columns}
+    <p class="loading">loading...</p>
+    {:then columns}
+    {#each columns as column, i}
+    <div class="column">
+        <h2>{column.name}</h2>
+        <div class="kinks" data-kink-column={i}>
+            {#each column.kinks as kink}
             <div class="kink" data-id={kink.id}>
                 <p title={kink.description}>{kink.name}</p>
                 <p class="description">{kink.description}</p>
             </div>
             {/each}
         </div>
-        {:catch error}
-        <p class="error">couldn't load??</p>
-        {/await}
     </div>
-</aside>
-{#await full_columns}
-<p class="loading">loading...</p>
-{:then columns}
-{#each columns as column, i}
-<div class="column">
-    <h2>{column.name}</h2>
-    <div class="kinks" data-kink-column={i}>
-        {#each column.kinks as kink}
-        <div class="kink" data-id={kink.id}>
-            <p title={kink.description}>{kink.name}</p>
-            <p class="description">{kink.description}</p>
-        </div>
-        {/each}
-    </div>
-</div>
-{/each}
-{:catch error}
-<p class="error">couldn't load??</p>
-{/await}
+    {/each}
+    {:catch error}
+    <p class="error">couldn't load??</p>
+    {/await}
+</article>
 
 <script>
     import dragula from 'dragula';
@@ -112,9 +117,16 @@
                     kinks: column.kinks.map(kinkID => db_data.kinks.find(k => k.id === kinkID)),
                 }))
             }),
-            url: ({ columns }) => {
+            urlInfo: ({ columns }) => {
                 return JSON.stringify(columns.map(({ kinks, name }) => ([name, ...kinks])));
-            }
+            },
+            listUrl: ({ columns }) => {
+                const urlInfo = JSON.stringify(columns.map(({ kinks, name }) => ([name, ...kinks])));
+                const url = new URL('/', location.href);
+                url.search = urlInfo;
+                url.hash = '';
+                return url.href;
+            },
         },
 
         methods: {
@@ -124,7 +136,7 @@
         },
 
         onstate({ current }) {
-            let url = current.url;
+            let url = current.urlInfo;
             console.log(url);
             history.replaceState(null, "", "#" + url);
         },

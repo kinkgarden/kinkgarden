@@ -10,5 +10,5 @@ function fixPageWidth() {
 
 setTimeout(fixPageWidth, 1);
 
-document.addEventListener('resize', fixPageWidth);
+window.addEventListener('resize', fixPageWidth);
 document.addEventListener('domContentLoaded', fixPageWidth);
