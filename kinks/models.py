@@ -12,7 +12,6 @@ class KinkCategory(models.Model):
 class Kink(models.Model):
     name = models.CharField(max_length=200)
     description = models.TextField(max_length=1000)
-    custom = models.BooleanField(default=False)
     category = models.ForeignKey(KinkCategory, on_delete=models.SET_NULL, null=True)
 
     def __str__(self):

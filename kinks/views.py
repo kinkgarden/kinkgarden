@@ -1,4 +1,5 @@
-import json
+import base64
+from collections import namedtuple
 
 from django.http import JsonResponse
 from django.shortcuts import render
@@ -43,35 +44,63 @@ class DetailView(generic.DetailView):
     template_name = 'kinks/kink.html'
 
 
-class KinkColumn:
-    def __init__(self, name, kinks):
-        self.name = name
-        self.kinks = kinks
+def decode_one(data: bytes):
+    """
+    Decodes a single kink.
+    :param data: the bytes to operate on
+    :return: (column ID, custom?, intensity, id / text, remaining data)
+    """
+    header = data[:2]
+    column = header[0] >> 6
+    type = header[0] >> 5 & 0b1
+    intensity = header[0] >> 3 & 0b11
+    rest = (header[0] & 0b111) << 8 | header[1]
+    if type == 0:
+        return column, False, intensity, rest, data[2:]
+    else:
+        text = data[2:2 + rest].decode('utf-8')
+        return column, True, intensity, text, data[2 + rest:]
 
-    @classmethod
-    def deserialize_all(cls, columns):
-        all_ids = set(id for column in columns for id in column[1:])
-        all_kinks = Kink.objects.filter(id__in=all_ids)
-        all_kinks = dict((x.id, x) for x in all_kinks)
 
-        def deserialize(column):
-            name, *ids = column
-            kinks = [all_kinks[x] for x in ids if x in all_kinks]
-            return cls(name, kinks)
+def decode_all(data: bytes):
+    """
+    Decodes an entire set of kinks.
+    :param data: bytes to operate on
+    :return: a list of (column, custom?, intensity, id / text) tuples
+    """
+    result = []
+    while len(data) > 0:
+        column, custom, intensity, value, data = decode_one(data)
+        result.append((column, custom, intensity, value))
+    return result
 
-        return [deserialize(column) for column in columns]
+
+ConcreteKink = namedtuple('ConcreteKink', ['name', 'description', 'intensity'])
+
+
+def hydrate(data: bytes):
+    decoded = decode_all(data)
+    columns = [[], [], [], []]
+    all_ids = set(value for (_, custom, _, value) in decoded if not custom)
+    all_kinks = Kink.objects.filter(id__in=all_ids)
+    all_kinks = dict((x.id, x) for x in all_kinks)
+    for (column, custom, intensity, value) in decoded:
+        if custom:
+            name, description = value.split('\n', 1)
+        else:
+            kink = all_kinks[value]
+            name, description = kink.name, kink.description
+        hydrated = ConcreteKink(name, description, intensity)
+        columns[column].append(hydrated)
+    return columns
 
 
 def kink_list_view(request):
     if len(request.GET) != 1:
         raise TypeError()
     list_data = list(request.GET.keys())[0]
-    try:
-        list_data = json.loads(list_data)
-    except json.JSONDecodeError:
-        raise TypeError()
-    try:
-        columns = KinkColumn.deserialize_all(list_data)
-    except ValueError:
-        raise TypeError()
-    return render(request, 'kinks/list.html', {'columns': columns})
+    list_data = list_data.replace('!', '=')
+    list_data = base64.b64decode(list_data)
+    columns = hydrate(list_data)
+    names = ["S tier", "good shit", "okay i guess", "nnnnnnope"]
+    return render(request, 'kinks/list.html', {'columns': zip(names, columns)})

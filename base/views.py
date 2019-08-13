@@ -8,5 +8,5 @@ def home_or_list_view(request):
     try:
         return kink_list_view(request)
     except TypeError:
-        kink_count = Kink.objects.filter(custom__exact=False).count()
+        kink_count = Kink.objects.count()
         return render(request, 'base/index.html', {'kink_count': kink_count})

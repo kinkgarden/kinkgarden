@@ -7,11 +7,11 @@
 
 {% block content %}
     <article>
-        {% for column in columns %}
+        {% for name, column in columns %}
             <div class="column">
-                <h2>{{ column.name }}</h2>
+                <h2>{{ name }}</h2>
                 <div class="kinks">
-                    {% for kink in column.kinks %}
+                    {% for kink in column %}
                         <div class="kink">
                             <p title="{{ kink.description }}">{{ kink.name }}</p>
                             <p class="description">{{ kink.description }}</p>

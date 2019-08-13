@@ -61,6 +61,112 @@
 <script>
     import dragula from 'dragula';
 
+    function decode_one(data) {
+        let header = data.slice(0, 2);
+        let column = header[0] >> 6;
+        let type = header[0] >> 5 & 0b1;
+        let intensity = header[0] >> 3 & 0b11;
+        let rest = (header[0] & 0b111) << 8 | header[1];
+        if (type === 0) {
+            return [column, false, intensity, rest, data.slice(2)];
+        } else {
+            let text = data.slice(2, 2 + rest);
+            const decoder = new TextDecoder('utf-8');
+            text = decoder.decode(text);
+            return [column, true, intensity, text, data.slice(2 + rest)];
+        }
+    }
+
+    function encode_one([column, custom, intensity, value]) {
+        let length = 2 + (custom ? value.length : 0);
+        let result = new Uint8Array(length);
+        if (custom) {
+            const encoder = new TextEncoder('utf-8');
+            let text = encoder.encode(value);
+            result.set(text, 2);
+            value = value.length;
+        }
+        let type = custom ? 1 : 0;
+        result[0] = (column << 6 | type << 5 | intensity << 3 | ((value >> 8) & 0b111));
+        result[1] = value & 0b11111111;
+        return result;
+    }
+
+    function decode_all(data) {
+        let result = [];
+        while (data.length > 0) {
+            let [column, custom, intensity, value, new_data] = decode_one(data);
+            data = new_data;
+            result.push([column, custom, intensity, value]);
+        }
+        return result;
+    }
+
+    function encode_all(kinks) {
+        let pieces = kinks.map(encode_one);
+        let total_length = pieces.map(x => x.length).reduce((a, b) => a + b, 0);
+        let data = new Uint8Array(total_length);
+        let position = 0;
+        for (let piece of pieces) {
+            data.set(piece, position);
+            position += piece.length;
+        }
+        return data;
+    }
+
+    function hydrate(data) {
+        let decoded = decode_all(data);
+        let columns = [
+            {name: "S tier", kinks: []},
+            {name: "good shit", kinks: []},
+            {name: "okay i guess", kinks: []},
+            {name: "nnnnnnope", kinks: []}
+        ];
+        for (let [column, custom, intensity, value] of decoded) {
+            columns[column].kinks.push([custom, intensity, value]);
+        }
+        return columns;
+    }
+
+    function dehydrate(columns) {
+        let data = [];
+        for (let i = 0; i < columns.length; i++) {
+            for (let [custom, intensity, value] of columns[i].kinks) {
+                if (custom) {
+                    // TODO figure out custom kinks
+                }
+                data.push([i, custom, intensity, value]);
+            }
+        }
+        return encode_all(data);
+    }
+
+    function deserialize(hash) {
+        hash = hash.replace('!', '=');
+        let string_data = atob(hash);
+        let data = new Uint8Array(string_data.length);
+        data.forEach((_, i) => data[i] = string_data.charCodeAt(i));
+        return hydrate(data);
+    }
+
+    function serialize(columns) {
+        let data = dehydrate(columns);
+        let string_data = String.fromCharCode(...data);
+        let b64 = btoa(string_data);
+        return b64.replace('=', '!');
+    }
+
+    function fetchKink(kink, db_data) {
+        let [custom, intensity, value] = kink;
+        if (custom) {
+            let [name, description] = value.split('\n', 1);
+            return {custom, intensity, name, description};
+        } else {
+            let {name, description} = db_data.kinks.find(k => k.id === value);
+            return {custom, intensity, name, description, id: value};
+        }
+    }
+
     export default {
         data() {
             let columns = [
@@ -82,9 +188,8 @@
                 },
             ];
             if (location.hash.startsWith('#')) {
-                let hash = decodeURI(location.hash.substring(1));
-                columns = JSON.parse(hash);
-                columns = columns.map(([name, ...kinks]) => ({name, kinks}));
+                let hash = location.hash.substring(1);
+                columns = deserialize(hash);
                 console.log('Restoring', columns);
             }
             return {
@@ -114,14 +219,14 @@
             full_columns: ({ columns, db_promise }) => db_promise.then(db_data => {
                 return columns.map(column => ({
                     name: column.name,
-                    kinks: column.kinks.map(kinkID => db_data.kinks.find(k => k.id === kinkID)),
+                    kinks: column.kinks.map(x => fetchKink(x, db_data)),
                 }))
             }),
             urlInfo: ({ columns }) => {
-                return JSON.stringify(columns.map(({ kinks, name }) => ([name, ...kinks])));
+                return serialize(columns);
             },
             listUrl: ({ columns }) => {
-                const urlInfo = JSON.stringify(columns.map(({ kinks, name }) => ([name, ...kinks])));
+                const urlInfo = serialize(columns);
                 const url = new URL('/', location.href);
                 url.search = urlInfo;
                 url.hash = '';
@@ -164,10 +269,10 @@
                     let {columns} = this.get();
                     if (!source.classList.contains('menu-kinks')) {
                         const sourceColumn = source.dataset.kinkColumn;
-                        columns[sourceColumn].kinks = columns[sourceColumn].kinks.filter(k => k.id !== kinkID);
+                        columns[sourceColumn].kinks = columns[sourceColumn].kinks.filter(k => k[2] !== kinkID);
                     }
                     const targetColumn = target.dataset.kinkColumn;
-                    columns[targetColumn].kinks = columns[targetColumn].kinks.concat([kinkID]);
+                    columns[targetColumn].kinks = columns[targetColumn].kinks.concat([[false, 0, kinkID]]);
                     setTimeout(() => this.set({columns}));
                 }
             });
