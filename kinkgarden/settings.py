@@ -126,6 +126,18 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
+# Mail setup if given in environment
+if 'EMAIL_HOST' in os.environ:
+    EMAIL_HOST = os.environ['EMAIL_HOST']
+if 'EMAIL_HOST_USER' in os.environ:
+    EMAIL_HOST_USER = os.environ['EMAIL_HOST_USER']
+if 'EMAIL_HOST_PASSWORD' in os.environ:
+    EMAIL_HOST_PASSWORD = os.environ['EMAIL_HOST_PASSWORD']
+EMAIL_USE_TLS = True
+EMAIL_PORT = 587
+if 'ADMINS' in os.environ:
+    ADMINS = list(tuple(x.split(' ')) for x in os.environ['ADMINS'].split(','))
+
 # let local_settings override what's here
 try:
     from .local_settings import *
