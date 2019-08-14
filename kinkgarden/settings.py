@@ -25,6 +25,12 @@ if 'SECRET_KEY' in os.environ:
     SECRET_KEY = os.environ['SECRET_KEY']
 
 # DEBUG = True
+if 'DEBUG_UNTIL' in os.environ:
+    from datetime import datetime
+    until = datetime.fromisoformat(os.environ['DEBUG_UNTIL'])
+    now = datetime.utcnow()
+    if now < until:
+        DEBUG = True
 
 # ALLOWED_HOSTS = []
 
