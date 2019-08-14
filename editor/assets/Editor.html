@@ -142,7 +142,7 @@
     }
 
     function deserialize(hash) {
-        hash = hash.replace('!', '=');
+        hash = hash.replace(/!/g, '=');
         let string_data = atob(hash);
         let data = new Uint8Array(string_data.length);
         data.forEach((_, i) => data[i] = string_data.charCodeAt(i));
@@ -153,7 +153,7 @@
         let data = dehydrate(columns);
         let string_data = String.fromCharCode(...data);
         let b64 = btoa(string_data);
-        return b64.replace('=', '!');
+        return b64.replace(/=/g, '!');
     }
 
     function fetchKink(kink, db_data) {
