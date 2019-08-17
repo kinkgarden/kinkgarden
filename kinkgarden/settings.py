@@ -137,6 +137,7 @@ if 'EMAIL_HOST' in os.environ:
     EMAIL_HOST = os.environ['EMAIL_HOST']
 if 'EMAIL_HOST_USER' in os.environ:
     EMAIL_HOST_USER = os.environ['EMAIL_HOST_USER']
+    SERVER_EMAIL = EMAIL_HOST_USER
 if 'EMAIL_HOST_PASSWORD' in os.environ:
     EMAIL_HOST_PASSWORD = os.environ['EMAIL_HOST_PASSWORD']
 EMAIL_USE_TLS = True
