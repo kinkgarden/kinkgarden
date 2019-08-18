@@ -9,3 +9,7 @@ body {
     background-color: #EEEEEE;
     font-size: 16px;
 }
+
+#logo {
+    height: 60px;
+}

@@ -6,12 +6,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{% block title %}kink.garden{% endblock %}</title>
     <link rel="stylesheet" type="text/css" href="{% static 'base/style.css' %}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{% static 'base/icon32.png' %}">
+    <link rel="icon" type="image/png" sizes="256x256" href="{% static 'base/icon256.png' %}">
+    <link rel="icon" type="image/svg+xml" sizes="any" href="{% static 'base/icon.svg' %}">
     {% block extra_headers %}{% endblock %}
 </head>
 <body>
 <header>
     {% block header %}
-        <a href="/">kink.garden</a>
+        <a href="/"><img id="logo" src="{% static 'base/logo.svg' %}" alt="kink.garden"></a>
     {% endblock %}
 </header>
 <main>
