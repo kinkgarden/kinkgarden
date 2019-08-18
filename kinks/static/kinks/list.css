@@ -1,6 +1,11 @@
 html {
     height: 100%;
     --page-width: 100vw;
+
+    --hue-heart: 179.2;
+    --hue-check: 102.2;
+    --hue-tilde: 42.5;
+    --hue-no: 344.8;
 }
 
 body {
@@ -36,9 +41,28 @@ main > article > div.column {
     flex: 1 0 0;
 }
 
+.icon.heart {
+    --hue: var(--hue-heart);
+}
+
+.icon.check {
+    --hue: var(--hue-check);
+}
+
+.icon.tilde {
+    --hue: var(--hue-tilde);
+}
+
+.icon.no {
+    --hue: var(--hue-no);
+}
+
 svg.icon {
     max-height: 40px;
     width: 100%;
+
+    --color: hsl(var(--hue), var(--saturation, 60%), var(--lightness, 50%));
+    fill: var(--color);
 }
 
 .kinks {

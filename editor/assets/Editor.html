@@ -31,16 +31,16 @@
                     <p class="description">{kink.description}</p>
                     <div class="shortcuts">
                         <button class="shortcut" class:selected="isKinkInColumn(kink, 0)" data-target="0">
-                            <svg><use xlink:href="#heart"></use></svg>
+                            <svg class="icon heart"><use xlink:href="#heart"></use></svg>
                         </button>
                         <button class="shortcut" class:selected="isKinkInColumn(kink, 1)" data-target="1">
-                            <svg><use xlink:href="#check"></use></svg>
+                            <svg class="icon check"><use xlink:href="#check"></use></svg>
                         </button>
                         <button class="shortcut" class:selected="isKinkInColumn(kink, 2)" data-target="2">
-                            <svg><use xlink:href="#tilde"></use></svg>
+                            <svg class="icon tilde"><use xlink:href="#tilde"></use></svg>
                         </button>
                         <button class="shortcut" class:selected="isKinkInColumn(kink, 3)" data-target="3">
-                            <svg><use xlink:href="#no"></use></svg>
+                            <svg class="icon no"><use xlink:href="#no"></use></svg>
                         </button>
                     </div>
                 </div>
@@ -56,7 +56,7 @@
     {:then columns}
     {#each columns as column, i}
     <div class="column" on:dragover|preventDefault="dragover(event, i)" on:drop|preventDefault="drop(event, i)">
-        <h2><svg class="icon"><use xlink:href="#{column.name}"></use></svg></h2>
+        <h2><svg class="icon {column.name}"><use xlink:href="#{column.name}"></use></svg></h2>
         <div class="kinks" data-kink-column={i}>
             {#each column.kinks as kink}
             <div class="kink" draggable="true" on:dragstart="dragstart(event, false)" on:dragend="dragend(event, i)" data-id={kink.id}>

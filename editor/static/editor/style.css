@@ -47,7 +47,7 @@ main > article > aside > div {
     position: relative;
 }
 
-.kink.selected {
+.kink.selected > :not(.shortcuts) {
     opacity: 0.6;
 }
 
@@ -77,5 +77,6 @@ main > article > aside > div {
 
 .kink .shortcut:not(.selected) svg {
     fill: none;
-    stroke: black;
+    stroke: var(--color);
+    stroke-width: 1px;
 }
