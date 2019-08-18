@@ -30,16 +30,16 @@
                     <p title={kink.description}>{kink.name}</p>
                     <p class="description">{kink.description}</p>
                     <div class="shortcuts">
-                        <button class="shortcut" class:selected="isKinkInColumn(kink, 0)" data-target="0">
+                        <button class="shortcut" class:selected="isKinkInColumn(kink, 0)" data-target="0" on:click="toggleColumn(kink.id, 0)">
                             <svg class="icon heart"><use xlink:href="#heart"></use></svg>
                         </button>
-                        <button class="shortcut" class:selected="isKinkInColumn(kink, 1)" data-target="1">
+                        <button class="shortcut" class:selected="isKinkInColumn(kink, 1)" data-target="1" on:click="toggleColumn(kink.id, 1)">
                             <svg class="icon check"><use xlink:href="#check"></use></svg>
                         </button>
-                        <button class="shortcut" class:selected="isKinkInColumn(kink, 2)" data-target="2">
+                        <button class="shortcut" class:selected="isKinkInColumn(kink, 2)" data-target="2" on:click="toggleColumn(kink.id, 2)">
                             <svg class="icon tilde"><use xlink:href="#tilde"></use></svg>
                         </button>
-                        <button class="shortcut" class:selected="isKinkInColumn(kink, 3)" data-target="3">
+                        <button class="shortcut" class:selected="isKinkInColumn(kink, 3)" data-target="3" on:click="toggleColumn(kink.id, 3)">
                             <svg class="icon no"><use xlink:href="#no"></use></svg>
                         </button>
                     </div>
@@ -247,6 +247,18 @@
         methods: {
             select_category(category) {
                 this.set({selected_category: category});
+            },
+            toggleColumn(id, column) {
+                let { columns } = this.get();
+                if (columns[column].kinks.some(k => k[2] === id)) {
+                    columns[column].kinks = columns[column].kinks.filter(k => k[2] !== id);
+                } else {
+                    columns.forEach(c => {
+                        c.kinks = c.kinks.filter(k => k[2] !== id)
+                    });
+                    columns[column].kinks.push([false, 0, id]);
+                }
+                this.set({ columns });
             },
             dragstart(event, fromMenu) {
                 if (fromMenu) {
