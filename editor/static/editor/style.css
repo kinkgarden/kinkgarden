@@ -67,16 +67,20 @@ main > article > aside > div {
 }
 
 .kink .shortcut {
-    padding: var(--margin-size);
+    padding: 0;
+    margin: 0;
+    border-width: 0;
+    background: none;
 }
 
 .kink .shortcut svg {
+    box-sizing: border-box;
+    padding: var(--margin-size);
     width: 100%;
     height: 100%;
 }
 
 .kink .shortcut:not(.selected) svg {
-    fill: none;
-    stroke: var(--color);
-    stroke-width: 1px;
+    background-color: var(--color);
+    fill: #ffffff;
 }
