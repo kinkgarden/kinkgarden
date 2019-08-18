@@ -1,10 +1,11 @@
 {% extends "base/base.html" %}
-{% load static %}
+{% load static kink_column_icons %}
 {% load render_bundle from webpack_loader %}
 
 {% block extra_headers %}
     <link rel="stylesheet" type="text/css" href="{% static 'kinks/list.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'editor/style.css' %}">
+    {% icon_svg %}
 {% endblock %}
 
 {% block end_of_body %}

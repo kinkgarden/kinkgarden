@@ -36,6 +36,11 @@ main > article > div.column {
     flex: 1 0 0;
 }
 
+svg.icon {
+    max-height: 40px;
+    width: 100%;
+}
+
 .kinks {
     min-height: 1em;
     background-color: rgba(255, 255, 255, 0.7);

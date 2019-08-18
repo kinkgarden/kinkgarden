@@ -102,5 +102,6 @@ def kink_list_view(request):
     list_data = list_data.replace('!', '=')
     list_data = base64.b64decode(list_data)
     columns = hydrate(list_data)
-    names = ["S tier", "good shit", "okay i guess", "nnnnnnope"]
-    return render(request, 'kinks/list.html', {'columns': zip(names, columns)})
+    names = ['heart', 'check', 'tilde', 'no']
+    data = {'columns': zip(names, columns)}
+    return render(request, 'kinks/list.html', data)

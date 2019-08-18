@@ -42,7 +42,7 @@
     {:then columns}
     {#each columns as column, i}
     <div class="column">
-        <h2>{column.name}</h2>
+        <h2><svg class="icon"><use xlink:href="#{column.name}"></use></svg></h2>
         <div class="kinks" data-kink-column={i}>
             {#each column.kinks as kink}
             <div class="kink" data-id={kink.id}>
@@ -117,10 +117,10 @@
     function hydrate(data) {
         let decoded = decode_all(data);
         let columns = [
-            {name: "S tier", kinks: []},
-            {name: "good shit", kinks: []},
-            {name: "okay i guess", kinks: []},
-            {name: "nnnnnnope", kinks: []}
+            {name: "heart", kinks: []},
+            {name: "check", kinks: []},
+            {name: "tilde", kinks: []},
+            {name: "no", kinks: []}
         ];
         for (let [column, custom, intensity, value] of decoded) {
             columns[column].kinks.push([custom, intensity, value]);
@@ -170,22 +170,10 @@
     export default {
         data() {
             let columns = [
-                {
-                    "name": "S tier",
-                    "kinks": [],
-                },
-                {
-                    "name": "good shit",
-                    "kinks": [],
-                },
-                {
-                    "name": "okay i guess",
-                    "kinks": [],
-                },
-                {
-                    "name": "nnnnnnope",
-                    "kinks": [],
-                },
+                {name: "heart", kinks: []},
+                {name: "check", kinks: []},
+                {name: "tilde", kinks: []},
+                {name: "no", kinks: []}
             ];
             if (location.hash.startsWith('#')) {
                 let hash = location.hash.substring(1);
