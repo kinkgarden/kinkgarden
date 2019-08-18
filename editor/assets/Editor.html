@@ -24,11 +24,25 @@
             {#await selected_kinks}
             <p class="loading">loading...</p>
             {:then kinks}
-            <div class="kinks menu-kinks">
+            <div class="kinks menu-kinks" on:dragover|preventDefault="dragover(event, null)" on:drop|preventDefault="drop(event, null)">
                 {#each kinks as kink}
-                <div class="kink" data-id={kink.id}>
+                <div class="kink" class:selected="isKinkUsed(kink)" draggable={isKinkUnused(kink)} on:dragstart="dragstart(event, true)" data-id={kink.id}>
                     <p title={kink.description}>{kink.name}</p>
                     <p class="description">{kink.description}</p>
+                    <div class="shortcuts">
+                        <button class="shortcut" class:selected="isKinkInColumn(kink, 0)" data-target="0">
+                            <svg><use xlink:href="#heart"></use></svg>
+                        </button>
+                        <button class="shortcut" class:selected="isKinkInColumn(kink, 1)" data-target="1">
+                            <svg><use xlink:href="#check"></use></svg>
+                        </button>
+                        <button class="shortcut" class:selected="isKinkInColumn(kink, 2)" data-target="2">
+                            <svg><use xlink:href="#tilde"></use></svg>
+                        </button>
+                        <button class="shortcut" class:selected="isKinkInColumn(kink, 3)" data-target="3">
+                            <svg><use xlink:href="#no"></use></svg>
+                        </button>
+                    </div>
                 </div>
                 {/each}
             </div>
@@ -41,11 +55,11 @@
     <p class="loading">loading...</p>
     {:then columns}
     {#each columns as column, i}
-    <div class="column">
+    <div class="column" on:dragover|preventDefault="dragover(event, i)" on:drop|preventDefault="drop(event, i)">
         <h2><svg class="icon"><use xlink:href="#{column.name}"></use></svg></h2>
         <div class="kinks" data-kink-column={i}>
             {#each column.kinks as kink}
-            <div class="kink" data-id={kink.id}>
+            <div class="kink" draggable="true" on:dragstart="dragstart(event, false)" on:dragend="dragend(event, i)" data-id={kink.id}>
                 <p title={kink.description}>{kink.name}</p>
                 <p class="description">{kink.description}</p>
             </div>
@@ -59,8 +73,6 @@
 </article>
 
 <script>
-    import dragula from 'dragula';
-
     function decode_one(data) {
         let header = data.slice(0, 2);
         let column = header[0] >> 6;
@@ -204,6 +216,16 @@
                 }
             }),
             is_selected: ({ selected_category }) => (c) => selected_category === c,
+            isKinkUsed: ({ columns }) => (kink) => {
+                return columns.some(({ kinks }) => kinks.some(k => k[2] === kink.id));
+            },
+            isKinkUnused: ({ columns }) => (kink) => {
+                return columns.every(({ kinks }) => kinks.every(k => k[2] !== kink.id));
+            },
+            isKinkInColumn: ({ columns }) => (kink, column) => {
+                let kinks = columns[column].kinks;
+                return kinks.some(k => k[2] === kink.id);
+            },
             full_columns: ({ columns, db_promise }) => db_promise.then(db_data => {
                 return columns.map(column => ({
                     name: column.name,
@@ -226,43 +248,46 @@
             select_category(category) {
                 this.set({selected_category: category});
             },
+            dragstart(event, fromMenu) {
+                if (fromMenu) {
+                    event.dataTransfer.effectAllowed = "copy";
+                } else {
+                    event.dataTransfer.effectAllowed = "move";
+                }
+                let id = event.target.dataset.id;
+                event.dataTransfer.setData("text/plain", id);
+            },
+            dragover(event, column) {
+                // can't reject illegitimate drags because we can't get the data out of the drag event 😔
+                event.dataTransfer.dropEffect = event.dataTransfer.effectAllowed;
+            },
+            drop(event, column) {
+                if (column !== null) {
+                    const data = event.dataTransfer;
+                    let id = parseInt(data.getData("text/plain"));
+                    let columns = this.get().columns;
+                    // must defer so that if we drag to ourself we add after we remove
+                    // (there are almost certainly better ways to handle this)
+                    setTimeout(() => {
+                        columns[column].kinks = [...columns[column].kinks, [false, 0, id]];
+                        this.set({ columns });
+                    });
+                }
+            },
+            dragend(event, column) {
+                const data = event.dataTransfer;
+                if (data.dropEffect === "move" && column !== null) {
+                    let columns = this.get().columns;
+                    let id = parseInt(event.target.dataset.id);
+                    columns[column].kinks = columns[column].kinks.filter(k => k[2] !== id);
+                    this.set({ columns });
+                }
+            },
         },
 
         onstate({ current }) {
             let url = current.urlInfo;
             history.replaceState(null, "", "#" + url);
-        },
-
-        oncreate() {
-            let drag = dragula({
-                isContainer(el) {
-                    return el.classList.contains('kinks');
-                },
-
-                copy(el, source) {
-                    return source.classList.contains('menu-kinks');
-                },
-
-                accepts(el, target) {
-                    return !target.classList.contains('menu-kinks');
-                },
-
-                removeOnSpill: true,
-            });
-
-            drag.on('drop', (el, target, source) => {
-                if (source !== target) {
-                    const kinkID = parseInt(el.dataset.id, 10);
-                    let {columns} = this.get();
-                    if (!source.classList.contains('menu-kinks')) {
-                        const sourceColumn = source.dataset.kinkColumn;
-                        columns[sourceColumn].kinks = columns[sourceColumn].kinks.filter(k => k[2] !== kinkID);
-                    }
-                    const targetColumn = target.dataset.kinkColumn;
-                    columns[targetColumn].kinks = columns[targetColumn].kinks.concat([[false, 0, kinkID]]);
-                    setTimeout(() => this.set({columns}));
-                }
-            });
         },
     };
 </script>
