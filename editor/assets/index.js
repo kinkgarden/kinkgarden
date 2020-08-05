@@ -1,7 +1,10 @@
-import Editor from './Editor.html';
+import Editor from './Editor.svelte';
 
 const app = new Editor({
     target: document.querySelector('main'),
+    props: {
+        dbData: JSON.parse(document.getElementById('db-data').textContent),
+    },
 });
 
 function fixPageWidth() {
