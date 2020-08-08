@@ -66,8 +66,7 @@ ROOT_URLCONF = 'kinkgarden.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'kinks/templates')]
-        ,
+        'DIRS': [os.path.join(BASE_DIR, 'kinks/templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
