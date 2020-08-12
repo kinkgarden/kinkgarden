@@ -8,7 +8,7 @@
 
 {% block content %}
     <article>
-        {% for name, column in columns %}
+        {% for name, column in kinklist.columns %}
             <div class="column">
                 <h2><svg class="icon {{ name }}"><use xlink:href="#{{ name }}"></use></svg></h2>
                 <div class="kinks">
@@ -22,4 +22,5 @@
             </div>
         {% endfor %}
     </article>
+    <a href="{% url 'kinks:kink_list_edit' kinklist.id %}">edit</a>
 {% endblock %}

@@ -9,6 +9,7 @@
 {% endblock %}
 
 {% block end_of_body %}
-    {{ data | json_script:'db-data' }}
+    {{ db_data | json_script:'db-data' }}
+    {% if init_data %}{{ init_data | json_script:'init-data' }}{% endif %}
     {% render_bundle 'main' %}
 {% endblock %}

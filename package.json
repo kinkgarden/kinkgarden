@@ -13,5 +13,8 @@
     "webpack": "4.44.1",
     "webpack-bundle-tracker": "0.4.2-beta",
     "webpack-cli": "3.3.12"
+  },
+  "dependencies": {
+    "js-cookie": "^2.2.1"
   }
 }

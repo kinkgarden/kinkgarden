@@ -1,12 +1,8 @@
 from django.shortcuts import render
 
 from kinks.models import Kink
-from kinks.views import kink_list_view
 
 
-def home_or_list_view(request):
-    try:
-        return kink_list_view(request)
-    except TypeError:
-        kink_count = Kink.objects.count()
-        return render(request, 'base/index.html', {'kink_count': kink_count})
+def home_view(request):
+    kink_count = Kink.objects.count()
+    return render(request, 'base/index.html', {'kink_count': kink_count})

@@ -1,9 +1,12 @@
 import Editor from './Editor.svelte';
 
+const initDataElement = document.getElementById('init-data');
+
 const app = new Editor({
     target: document.querySelector('main'),
     props: {
         dbData: JSON.parse(document.getElementById('db-data').textContent),
+        initData: initDataElement === undefined ? undefined : JSON.parse(initDataElement.textContent),
     },
 });
 

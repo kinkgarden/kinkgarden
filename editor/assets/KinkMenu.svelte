@@ -9,7 +9,7 @@
         kinkColumn = {};
         for (let columnIndex = 0; columnIndex < columns.length; columnIndex++) {
             for (let kink of columns[columnIndex].kinks) {
-                kinkColumn[kink[2]] = columnIndex;
+                kinkColumn[kink.id] = columnIndex;
             }
         }
     }

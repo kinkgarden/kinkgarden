@@ -1,107 +1,128 @@
-import base64
-from collections import namedtuple
+import json
 
-from django.http import JsonResponse
+from django.http import HttpResponseRedirect, Http404
 from django.shortcuts import render
 from django.views import generic
+from django.urls import reverse
+from django.contrib.auth.hashers import check_password, make_password
 
-from .models import KinkCategory, Kink
+from .models import KinkList, KinkListColumn, StandardKinkListEntry, CustomKinkListEntry
+from editor.views import EditorView
 
 
-class IndexView(generic.ListView):
-    template_name = 'kinks/index.html'
-    context_object_name = 'category_list'
+class KinkListView(generic.DetailView):
+    model = KinkList
+    template_name = 'kinks/list.html'
 
-    def get_queryset(self):
-        return KinkCategory.objects.order_by('name')
+    def bad_password(self, request):
+        context = {}
+        if len(request.POST.get('view-password', '')) > 0:
+            context['error_message'] = 'Incorrect password.'
+        return render(request, 'kinks/enter_view_password.html', context)
 
-    def render_to_response(self, context, **response_kwargs):
-        if self.request.META['HTTP_ACCEPT'] == 'application/json':
-            return JsonResponse(
-                {
-                    'categories': list(KinkCategory.objects.values()),
-                    'kinks': list(Kink.objects.values()),
-                },
-                **response_kwargs
-            )
+    def get(self, request, *args, **kwargs):
+        try:
+            self.object = self.get_object()
+        except Http404:
+            return self.bad_password(request)
+        if len(self.object.view_password) > 0:
+            if not check_password(request.POST.get('view-password', ''), self.object.view_password):
+                return self.bad_password(request)
+        context = self.get_context_data(object=self.object)
+        return self.render_to_response(context)
+
+    post = get
+
+
+class KinkListCreate(EditorView):
+    def post(self, request, *args, **kwargs):
+        list_data = json.loads(request.POST['kink-list-data'])
+        view_password = request.POST['view-password']
+        if len(view_password) > 0:
+            view_password = make_password(view_password)
         else:
-            return super().render_to_response(context, **response_kwargs)
+            view_password = ''
+        edit_password = request.POST['edit-password']
+        if len(edit_password) > 0:
+            edit_password = make_password(edit_password)
+        else:
+            edit_password = ''
+        kink_list = KinkList(view_password=view_password, edit_password=edit_password)
+        kink_list.save()
+        for column in list_data:
+            column_desc = KinkListColumn[column['name'].upper()]
+            entry_metadata = {'list': kink_list, 'column': column_desc.value}
+            for kink in column['kinks']:
+                if kink['custom']:
+                    name = kink['name']
+                    description = kink['description']
+                    entry = CustomKinkListEntry(custom_name=name, custom_description=description, **entry_metadata)
+                    entry.save()
+                else:
+                    kink_id = kink['id']
+                    entry = StandardKinkListEntry(kink_id=kink_id, **entry_metadata)
+                    entry.save()
+        return HttpResponseRedirect(reverse('kinks:kink_list', args=(kink_list.id,)))
 
 
-class CategoryView(generic.DetailView):
-    model = KinkCategory
-    context_object_name = 'category'
-    template_name = 'kinks/category.html'
+class KinkListEdit(EditorView):
+    def bad_password(self, request):
+        context = {}
+        if len(request.POST.get('edit-password', '')) > 0:
+            context['error_message'] = 'Incorrect password.'
+        return render(request, 'kinks/enter_edit_password.html', context)
+
+    def get(self, request, *args, **kwargs):
+        return self.bad_password(request)
+
+    def post(self, request, *args, **kwargs):
+        if 'kink-list-data' in request.POST:
+            list_data = json.loads(request.POST['kink-list-data'])
+            kink_list = KinkList.objects.get(id=kwargs['pk'])
+
+            # this probably could be better.
+            new_standard_ids = set(k['id'] for col in list_data for k in col['kinks'] if not k['custom'])
+            kink_list.standardkinklistentry_set.exclude(kink_id__in=new_standard_ids).delete()
+
+            new_custom_names = set(k['name'] for col in list_data for k in col['kinks'] if k['custom'])
+            kink_list.customkinklistentry_set.exclude(custom_name__in=new_custom_names).delete()
+
+            for column in list_data:
+                column_desc = KinkListColumn[column['name'].upper()]
+                for kink in column['kinks']:
+                    if kink['custom']:
+                        name = kink['name']
+                        description = kink['description']
+                        entry, _ = kink_list.customkinklistentry_set.get_or_create(
+                            custom_name=name,
+                            defaults={'custom_description': description, 'column': column_desc.value}
+                        )
+                        entry.custom_description = description
+                        entry.column = column_desc.value
+                        entry.save()
+                    else:
+                        kink_id = kink['id']
+                        entry, _ = kink_list.standardkinklistentry_set.get_or_create(
+                            kink_id=kink_id,
+                            defaults={'column': column_desc.value}
+                        )
+                        entry.column = column_desc.value
+                        entry.save()
+            return HttpResponseRedirect(reverse('kinks:kink_list', args=(kink_list.id,)))
+        try:
+            self.object = KinkList.objects.get(id=kwargs['pk'])
+        except KinkList.DoesNotExist:
+            return self.bad_password(request)
+        if not check_password(request.POST.get('edit-password', ''), self.object.edit_password):
+            return self.bad_password(request)
+        return super().get(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['kinks'] = context['category'].kink_set.order_by('name')
+        column_data = dict((x, []) for x in KinkListColumn)
+        for entry in self.object.standardkinklistentry_set.all():
+            column_data[KinkListColumn(entry.column)].append({'custom': False, 'id': entry.kink_id})
+        for entry in self.object.customkinklistentry_set.all():
+            column_data[KinkListColumn(entry.column)].append({'custom': True, 'name': entry.custom_name, 'description': entry.custom_description})
+        context['init_data'] = [{'name': x.name.lower(), 'kinks': k} for x, k in column_data.items()]
         return context
-
-
-class DetailView(generic.DetailView):
-    model = Kink
-    template_name = 'kinks/kink.html'
-
-
-def decode_one(data: bytes):
-    """
-    Decodes a single kink.
-    :param data: the bytes to operate on
-    :return: (column ID, custom?, intensity, id / text, remaining data)
-    """
-    header = data[:2]
-    column = header[0] >> 6
-    type = header[0] >> 5 & 0b1
-    intensity = header[0] >> 3 & 0b11
-    rest = (header[0] & 0b111) << 8 | header[1]
-    if type == 0:
-        return column, False, intensity, rest, data[2:]
-    else:
-        text = data[2:2 + rest].decode('utf-8')
-        return column, True, intensity, text, data[2 + rest:]
-
-
-def decode_all(data: bytes):
-    """
-    Decodes an entire set of kinks.
-    :param data: bytes to operate on
-    :return: a list of (column, custom?, intensity, id / text) tuples
-    """
-    result = []
-    while len(data) > 0:
-        column, custom, intensity, value, data = decode_one(data)
-        result.append((column, custom, intensity, value))
-    return result
-
-
-ConcreteKink = namedtuple('ConcreteKink', ['name', 'description', 'intensity'])
-
-
-def hydrate(data: bytes):
-    decoded = decode_all(data)
-    columns = [[], [], [], []]
-    all_ids = set(value for (_, custom, _, value) in decoded if not custom)
-    all_kinks = Kink.objects.filter(id__in=all_ids)
-    all_kinks = dict((x.id, x) for x in all_kinks)
-    for (column, custom, intensity, value) in decoded:
-        if custom:
-            name, description = value.split('\n', 1)
-        else:
-            kink = all_kinks[value]
-            name, description = kink.name, kink.description
-        hydrated = ConcreteKink(name, description, intensity)
-        columns[column].append(hydrated)
-    return columns
-
-
-def kink_list_view(request):
-    if len(request.GET) != 1:
-        raise TypeError()
-    list_data = list(request.GET.keys())[0]
-    list_data = list_data.replace('!', '=')
-    list_data = base64.b64decode(list_data)
-    columns = hydrate(list_data)
-    names = ['heart', 'check', 'tilde', 'no']
-    data = {'columns': zip(names, columns)}
-    return render(request, 'kinks/list.html', data)
