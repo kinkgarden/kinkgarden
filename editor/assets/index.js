@@ -6,7 +6,7 @@ const app = new Editor({
     target: document.querySelector('main'),
     props: {
         dbData: JSON.parse(document.getElementById('db-data').textContent),
-        initData: initDataElement === undefined ? undefined : JSON.parse(initDataElement.textContent),
+        initData: initDataElement ? JSON.parse(initDataElement.textContent) : undefined,
     },
 });
 
