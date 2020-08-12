@@ -161,4 +161,5 @@ try:
 except ImportError:
     pass
 
-django_heroku.settings(locals())
+if 'CI' not in os.environ:
+    django_heroku.settings(locals())
