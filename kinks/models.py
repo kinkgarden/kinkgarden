@@ -40,6 +40,7 @@ class KinkList(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     view_password = models.CharField(max_length=128, blank=True)
     edit_password = models.CharField(max_length=128, blank=True)
+    example = models.BooleanField(default=False)
 
     @property
     def columns(self) -> typing.List[typing.Tuple[str, typing.List[ConcreteKink]]]:

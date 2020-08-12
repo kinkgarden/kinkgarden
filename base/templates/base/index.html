@@ -18,13 +18,23 @@
 {% block content %}
     <h1>kink.garden</h1>
     <h2>share your kinks with your friends, or the world</h2>
-    <p>kink.garden is a work in progress, but it's usable right now!!
-        you can look at an example once we have one we like, or you can dive right in and <a href="{% url 'kinks:kink_list_new' %}">make a new list yourself</a>.
-        {% if kink_count > 0 %}
-            we have {{ kink_count }} kink{{ kink_count | pluralize }} in our database right now.
-        {% endif %}
+    <p>
+        kink.garden is a work in progress, but it's usable right now!!
+        you can look at an
+        {% if example %}<a href="{% url 'kinks:kink_list' example.id %}">example</a>{% else %}example once we have one we like{% endif %},
+        or you can dive right in and <a href="{% url 'kinks:kink_list_new' %}">make a new list yourself</a>.
     </p>
-    <p>in the meantime, feel free to follow us on <a href="https://twitter.com/kinkgarden">Twitter</a>.</p>
+    {% if kink_count > 0 %}
+        <p>
+            we have {{ kink_count }} kink{{ kink_count | pluralize }} in our database right now.
+        </p>
+    {% endif %}
+    {% if list_count > 0 %}
+        <p>
+            we have {{ list_count }} kink list{{ list_count | pluralize }} in our database right now.
+        </p>
+    {% endif %}
+    <p>feel free to follow us on <a href="https://twitter.com/kinkgarden">Twitter</a>.</p>
     <h4>what is this?</h4>
     <p>kink.garden is a project that aims to create a website where you can make a <b>list of your kinks</b> that you
         can share with friends, the world, or no one but yourself!</p>
