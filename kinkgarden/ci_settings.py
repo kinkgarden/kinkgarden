@@ -15,3 +15,5 @@ try:
 except FileExistsError:
     pass
 DEBUG = True
+
+TEMPLATES[0]['OPTIONS']['debug'] = True
