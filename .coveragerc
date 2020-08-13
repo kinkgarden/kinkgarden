@@ -3,6 +3,7 @@ source =
     .
 omit =
     venv/*
+    virtualenv/*
     node_modules/*
     */migrations/*
     */tests.py
