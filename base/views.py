@@ -1,4 +1,5 @@
-from django.shortcuts import render
+from django.http import HttpRequest
+from django.shortcuts import render, redirect
 
 from kinks.models import Kink, KinkList
 
@@ -11,3 +12,11 @@ def home_view(request):
     except KinkList.DoesNotExist:
         random_example = None
     return render(request, 'base/index.html', {'kink_count': kink_count, 'list_count': list_count, 'example': random_example})
+
+
+def age_gate_view(request: HttpRequest):
+    if 'age-gate-accept' in request.POST:
+        return None
+    if 'age-gate-reject' in request.POST:
+        return redirect('https://example.com')
+    return render(request, 'base/age-gate.html')

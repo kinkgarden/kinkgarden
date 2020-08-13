@@ -1,0 +1,12 @@
+{% extends "base/base.html" %}
+
+{% block content %}
+    <h1>This site contains adult content.</h1>
+    <p>The material on this site is suitable for adults only, including explicit textual descriptions of sexual content that some may find graphic or disturbing.</p>
+    <p>By continuing, you acknowledge that you are 18 or over and comfortable with this content.</p>
+    <form method="post">
+        {% csrf_token %}
+        <input type="submit" name="age-gate-accept" value="Proceed">
+        <input type="submit" name="age-gate-reject" value="Exit">
+    </form>
+{% endblock %}
