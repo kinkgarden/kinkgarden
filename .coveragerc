@@ -1,0 +1,14 @@
+[run]
+source =
+    .
+omit =
+    venv/*
+    node_modules/*
+    */migrations/*
+    */tests.py
+    htmlcov/*
+    kinkgarden/*settings.py
+    kinkgarden/wsgi.py
+    manage.py
+plugins =
+    django_coverage_plugin

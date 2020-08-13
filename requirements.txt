@@ -4,4 +4,6 @@ psycopg2==2.8.5
 django-webpack-loader==0.7.0
 django-heroku==0.3.1
 whitenoise[brotli]==5.2.0
+coverage==5.2.1
+django_coverage_plugin==1.8.0
 gunicorn==19.9.0; platform_system != 'Windows'
