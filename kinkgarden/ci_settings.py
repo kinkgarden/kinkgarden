@@ -9,4 +9,9 @@ DATABASES = {
     }
 }
 
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+try:
+    os.mkdir(STATIC_ROOT)
+except FileExistsError:
+    pass
 DEBUG = True
