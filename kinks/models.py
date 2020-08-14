@@ -42,6 +42,10 @@ class KinkList(models.Model):
     edit_password = models.CharField(max_length=128, blank=True)
     example = models.BooleanField(default=False)
 
+    def get_absolute_url(self):
+        from django.urls import reverse
+        return reverse('kinks:kink_list', args=(self.id,))
+
     @property
     def columns(self) -> typing.List[typing.Tuple[str, typing.List[ConcreteKink]]]:
         standard_kinks = self.standardkinklistentry_set.all().select_related('kink')

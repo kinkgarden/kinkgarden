@@ -18,7 +18,7 @@ class KinkListView(generic.DetailView):
         context = {}
         if len(request.POST.get('view-password', '')) > 0:
             context['error_message'] = 'Incorrect password.'
-        return render(request, 'kinks/enter_view_password.html', context)
+        return render(request, 'kinks/enter_view_password.html', context, status=403)
 
     def get(self, request, *args, **kwargs):
         try:
@@ -62,7 +62,7 @@ class KinkListCreate(EditorView):
                     kink_id = kink['id']
                     entry = StandardKinkListEntry(kink_id=kink_id, **entry_metadata)
                     entry.save()
-        return HttpResponseRedirect(reverse('kinks:kink_list', args=(kink_list.id,)))
+        return HttpResponseRedirect(kink_list.get_absolute_url())
 
 
 class KinkListEdit(EditorView):
@@ -70,7 +70,7 @@ class KinkListEdit(EditorView):
         context = {}
         if len(request.POST.get('edit-password', '')) > 0:
             context['error_message'] = 'Incorrect password.'
-        return render(request, 'kinks/enter_edit_password.html', context)
+        return render(request, 'kinks/enter_edit_password.html', context, status=403)
 
     def get(self, request, *args, **kwargs):
         return self.bad_password(request)
@@ -108,12 +108,10 @@ class KinkListEdit(EditorView):
                         )
                         entry.column = column_desc.value
                         entry.save()
-            return HttpResponseRedirect(reverse('kinks:kink_list', args=(kink_list.id,)))
+            return HttpResponseRedirect(kink_list.get_absolute_url())
         try:
             self.object = KinkList.objects.get(id=kwargs['pk'])
         except KinkList.DoesNotExist:
-            return self.bad_password(request)
-        if not check_password(request.POST.get('edit-password', ''), self.object.edit_password):
             return self.bad_password(request)
         return super().get(request, *args, **kwargs)
 
