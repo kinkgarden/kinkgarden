@@ -34,3 +34,7 @@ class AgeGateMiddlewareTests(TestCase):
         self.assertContains(response, '<input type="submit" name="age-gate-reject" value="Exit">', html=True)
         response = client.post('/', {'age-gate-reject': 'Exit'})
         self.assertRedirects(response, 'https://example.com', fetch_redirect_response=False)
+
+
+def approve_age_gate(client: Client):
+    client.post('/', {'age-gate-accept': 'Proceed'})
