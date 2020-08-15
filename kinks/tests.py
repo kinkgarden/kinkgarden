@@ -57,6 +57,19 @@ class KinkListViewTests(TestCase):
 
         response = self.client.get(kink_list.get_absolute_url())
         self.assertContains(response, '<input type="password" name="view-password">', status_code=403, html=True)
+        response = self.client.post(kink_list.get_absolute_url(), {'view-password': 'the-wrong-thing'})
+        self.assertContains(response, '<input type="password" name="view-password">', status_code=403, html=True)
+        self.assertContains(response, 'Incorrect password', status_code=403)
         response = self.client.post(kink_list.get_absolute_url(), {'view-password': view_password})
         self.assertContains(response, standard_name)
         self.assertContains(response, custom_name)
+
+    def test_nonexistent_list_deniable(self):
+        import uuid
+        fake_uuid = uuid.uuid4()
+        path = reverse('kinks:kink_list', args=(fake_uuid,))
+        response = self.client.get(path)
+        self.assertContains(response, '<input type="password" name="view-password">', status_code=403, html=True)
+        response = self.client.post(path, {'view-password': 'anything'})
+        self.assertContains(response, '<input type="password" name="view-password">', status_code=403, html=True)
+        self.assertContains(response, 'Incorrect password', status_code=403)
