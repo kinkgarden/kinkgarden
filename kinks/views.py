@@ -122,7 +122,7 @@ class KinkListEdit(PasswordProtectedMixin, EditorView):
             column_data[KinkListColumn(entry.column)].append({'custom': True, 'name': entry.custom_name, 'description': entry.custom_description})
         context['init_data'] = {
             'columns': [{'name': x.name.lower(), 'kinks': k} for x, k in column_data.items()],
-            'action': reverse('kinks:kink_list_save', kwargs=kwargs),
+            'action': reverse('kinks:kink_list_save', args=(self.object.id,)),
         }
         return context
 
