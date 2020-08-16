@@ -28,11 +28,13 @@ main > article > aside > div {
 }
 
 .category-menu ul li:hover {
-    background-color: rgba(255, 255, 255, 0.8);
+    background-color: #B347CC;
+    color: #ffffff;
 }
 
 .category-menu ul li.selected {
-    background-color: rgba(255, 255, 255, 0.5);
+    background-color: #743582;
+    color: #FFECFF;
 }
 
 .kinks.menu-kinks {
@@ -49,6 +51,7 @@ main > article > aside > div {
 
 .kink.selected > :not(.shortcuts) {
     opacity: 0.6;
+    color: #6A3772;
 }
 
 .kink .shortcuts {
@@ -81,6 +84,6 @@ main > article > aside > div {
 }
 
 .kink .shortcut:not(.selected) svg {
-    background-color: var(--color);
+   background-color: var(--color);
     fill: #ffffff;
 }
