@@ -1,22 +1,33 @@
 import typing
+import json
 
 from django.test import TestCase
 from django.urls import reverse
-from django.contrib.auth.hashers import make_password
+from django.contrib.auth.hashers import make_password, check_password
 
 from .models import Kink, KinkList, KinkListColumn, ConcreteKink
 from base.tests import approve_age_gate
 
 
-def make_test_data(list_args: typing.Optional[dict] = None):
-    if list_args is None:
-        list_args = {}
+def make_standard_kink():
     standard_kink_name = 'Sample Standard'
     standard_kink_description = 'This is a sample standard kink.'
     standard_kink = Kink.objects.create(name=standard_kink_name, description=standard_kink_description,
                                         category=None)
+    return standard_kink, standard_kink_description, standard_kink_name
+
+
+def make_custom_kink():
     custom_kink_name = 'Sample Custom'
     custom_kink_description = 'This is a sample custom kink.'
+    return custom_kink_description, custom_kink_name
+
+
+def make_test_data(list_args: typing.Optional[dict] = None):
+    if list_args is None:
+        list_args = {}
+    standard_kink, standard_kink_description, standard_kink_name = make_standard_kink()
+    custom_kink_description, custom_kink_name = make_custom_kink()
     kink_list = KinkList.objects.create(**list_args)
     kink_list.standardkinklistentry_set.create(column=KinkListColumn.HEART.value, kink=standard_kink)
     kink_list.customkinklistentry_set.create(column=KinkListColumn.NO.value, custom_name=custom_kink_name,
@@ -73,3 +84,47 @@ class KinkListViewTests(TestCase):
         response = self.client.post(path, {'view-password': 'anything'})
         self.assertContains(response, '<input type="password" name="view-password">', status_code=403, html=True)
         self.assertContains(response, 'Incorrect password', status_code=403)
+
+
+class KinkListCreateTests(TestCase):
+    def setUp(self):
+        approve_age_gate(self.client)
+
+    def test_create_list_works(self):
+        standard_kink, standard_description, standard_name = make_standard_kink()
+        custom_description, custom_name = make_custom_kink()
+        response = self.client.post(reverse('kinks:kink_list_new'), {
+            'view-password': '',
+            'edit-password': '',
+            'kink-list-data': json.dumps([
+                {'name': "heart", 'kinks': [{'custom': False, 'id': standard_kink.id}]},
+                {'name': "check", 'kinks': []},
+                {'name': "tilde", 'kinks': []},
+                {'name': "no", 'kinks': [{'custom': True, 'name': custom_name, 'description': custom_description}]}
+            ])
+        })
+        kink_list = KinkList.objects.get()
+        self.assertRedirects(response, kink_list.get_absolute_url())
+
+        response = self.client.get(kink_list.get_absolute_url())
+        self.assertContains(response, standard_name)
+        self.assertContains(response, custom_name)
+
+    def test_create_list_passwords_work(self):
+        view_password = 'insecure'
+        edit_password = 'also_insecure'
+        response = self.client.post(reverse('kinks:kink_list_new'), {
+            'view-password': view_password,
+            'edit-password': edit_password,
+            'kink-list-data': json.dumps([
+                {'name': "heart", 'kinks': []},
+                {'name': "check", 'kinks': []},
+                {'name': "tilde", 'kinks': []},
+                {'name': "no", 'kinks': []}
+            ])
+        })
+        kink_list = KinkList.objects.get()
+        self.assertRedirects(response, kink_list.get_absolute_url(), target_status_code=403)
+
+        self.assertTrue(check_password(view_password, kink_list.view_password))
+        self.assertTrue(check_password(edit_password, kink_list.edit_password))
