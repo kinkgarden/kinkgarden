@@ -19,6 +19,10 @@ class PrivacyPolicyView(generic.TemplateView):
     template_name = 'base/privacy_policy.html'
 
 
+def error_handling_test_view(request):
+    raise RuntimeError('Testing error handling')
+
+
 def age_gate_view(request: HttpRequest):
     if 'age-gate-accept' in request.POST:
         return None
