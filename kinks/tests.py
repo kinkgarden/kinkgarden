@@ -128,3 +128,51 @@ class KinkListCreateTests(TestCase):
 
         self.assertTrue(check_password(view_password, kink_list.view_password))
         self.assertTrue(check_password(edit_password, kink_list.edit_password))
+
+
+class KinkListEditTests(TestCase):
+    def setUp(self):
+        approve_age_gate(self.client)
+
+    def test_edit_happy_path_works(self):
+        edit_password = 'insecure'
+        list_args = dict(edit_password=make_password(edit_password))
+        custom_description, custom_name, kink_list, standard_description, standard_name = make_test_data(list_args)
+
+        old_standard_kink = Kink.objects.get()
+        new_standard_kink = Kink.objects.create(name='another standard kink', description='')
+        kink_list.standardkinklistentry_set.create(kink=new_standard_kink, column=KinkListColumn.CHECK.value)
+        kink_list.customkinklistentry_set.create(custom_name=custom_name + ' 2', custom_description='', column=KinkListColumn.TILDE.value)
+
+        edit_url = reverse('kinks:kink_list_edit', args=(kink_list.id,))
+        response = self.client.get(edit_url)
+        self.assertContains(response, '<input type="password" name="edit-password">', status_code=403, html=True)
+        response = self.client.post(edit_url, {'edit-password': 'the-wrong-thing'})
+        self.assertContains(response, '<input type="password" name="edit-password">', status_code=403, html=True)
+        self.assertContains(response, 'Incorrect password', status_code=403)
+        response = self.client.post(edit_url, {'edit-password': edit_password})
+        self.assertTemplateUsed(response, 'editor/editor.html')
+
+        newer_standard_kink = Kink.objects.create(name='one more standard kink', description='')
+
+        response = self.client.post(reverse('kinks:kink_list_save', args=(kink_list.id,)), {
+            'view-password': '',
+            'edit-password': '',
+            'kink-list-data': json.dumps([
+                {'name': "heart", 'kinks': [{'custom': False, 'id': newer_standard_kink.id}]},
+                {'name': "check", 'kinks': [{'custom': False, 'id': old_standard_kink.id}]},
+                {'name': "tilde", 'kinks': [{'custom': True, 'name': custom_name, 'description': custom_description}]},
+                {'name': "no", 'kinks': [{'custom': True, 'name': custom_name + ' 3', 'description': custom_description}]}
+            ])
+        })
+        self.assertRedirects(response, kink_list.get_absolute_url())
+
+        actual_columns = kink_list.columns
+        self.assertEqual(actual_columns[0][0], 'heart')
+        self.assertListEqual(actual_columns[0][1], [ConcreteKink(newer_standard_kink.name, newer_standard_kink.description)])
+        self.assertEqual(actual_columns[1][0], 'check')
+        self.assertListEqual(actual_columns[1][1], [ConcreteKink(standard_name, standard_description)])
+        self.assertEqual(actual_columns[2][0], 'tilde')
+        self.assertListEqual(actual_columns[2][1], [ConcreteKink(custom_name, custom_description)])
+        self.assertEqual(actual_columns[3][0], 'no')
+        self.assertListEqual(actual_columns[3][1], [ConcreteKink(custom_name + ' 3', custom_description)])
