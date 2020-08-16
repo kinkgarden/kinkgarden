@@ -1,5 +1,6 @@
 from django.http import HttpRequest
 from django.shortcuts import render, redirect
+from django.views import generic
 
 from kinks.models import Kink, KinkList
 
@@ -12,6 +13,10 @@ def home_view(request):
     except KinkList.DoesNotExist:
         random_example = None
     return render(request, 'base/index.html', {'kink_count': kink_count, 'list_count': list_count, 'example': random_example})
+
+
+class PrivacyPolicyView(generic.TemplateView):
+    template_name = 'base/privacy_policy.html'
 
 
 def age_gate_view(request: HttpRequest):
