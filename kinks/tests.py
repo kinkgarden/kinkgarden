@@ -176,3 +176,58 @@ class KinkListEditTests(TestCase):
         self.assertListEqual(actual_columns[2][1], [ConcreteKink(custom_name, custom_description)])
         self.assertEqual(actual_columns[3][0], 'no')
         self.assertListEqual(actual_columns[3][1], [ConcreteKink(custom_name + ' 3', custom_description)])
+
+    def test_nonexistent_list_deniable(self):
+        import uuid
+        fake_uuid = uuid.uuid4()
+        path = reverse('kinks:kink_list_edit', args=(fake_uuid,))
+        response = self.client.get(path)
+        self.assertContains(response, '<input type="password" name="edit-password">', status_code=403, html=True)
+        response = self.client.post(path, {'edit-password': 'anything'})
+        self.assertContains(response, '<input type="password" name="edit-password">', status_code=403, html=True)
+        self.assertContains(response, 'Incorrect password', status_code=403)
+
+    def test_list_save_dishonesty_prevention(self):
+        custom_description, custom_name, target, standard_description, standard_name = make_test_data()
+
+        gate_edit_password = 'insecure'
+        gate = KinkList.objects.create(edit_password=gate_edit_password)
+
+        self.client.post(reverse('kinks:kink_list_edit', args=(gate.id,)), {'edit-password': gate_edit_password})
+
+        response = self.client.post(reverse('kinks:kink_list_save', args=(target.id,)), {
+            'view-password': '',
+            'edit-password': '',
+            'kink-list-data': json.dumps([
+                {'name': "heart", 'kinks': []},
+                {'name': "check", 'kinks': []},
+                {'name': "tilde", 'kinks': []},
+                {'name': "no", 'kinks': []}
+            ])
+        })
+        self.assertEqual(response.status_code, 403)
+        self.assertEqual(target.standardkinklistentry_set.count(), 1)
+
+    def test_multi_list_drifting(self):
+        edit_password = 'insecure'
+        list_args = dict(edit_password=make_password(edit_password))
+        custom_description, custom_name, kink_list1, standard_description, standard_name = make_test_data(list_args)
+        kink_list2 = KinkList.objects.create(**list_args)
+
+        self.client.post(reverse('kinks:kink_list_edit', args=(kink_list1.id,)), {'edit-password': edit_password})
+        self.client.post(reverse('kinks:kink_list_edit', args=(kink_list2.id,)), {'edit-password': edit_password})
+
+        editor_data = {
+            'view-password': '',
+            'edit-password': '',
+            'kink-list-data': json.dumps([
+                {'name': "heart", 'kinks': []},
+                {'name': "check", 'kinks': []},
+                {'name': "tilde", 'kinks': []},
+                {'name': "no", 'kinks': []}
+            ])
+        }
+        response = self.client.post(reverse('kinks:kink_list_save', args=(kink_list1.id,)), editor_data)
+        self.assertRedirects(response, kink_list1.get_absolute_url())
+        response = self.client.post(reverse('kinks:kink_list_save', args=(kink_list2.id,)), editor_data)
+        self.assertRedirects(response, kink_list2.get_absolute_url())
