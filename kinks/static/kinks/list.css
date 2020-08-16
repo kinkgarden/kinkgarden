@@ -58,7 +58,7 @@ main > article > div.column {
 }
 
 svg.icon {
-    max-height: 40px;
+    max-height: 25px;
     width: 100%;
 
     --color: hsl(var(--hue), var(--saturation, 60%), var(--lightness, 50%));
@@ -67,7 +67,7 @@ svg.icon {
 
 .kinks {
     min-height: 1em;
-    background-color: rgba(255, 255, 255, 0.7);
+    background-color: #382037;
 }
 
 .kinks p.description {
@@ -75,7 +75,7 @@ svg.icon {
 }
 
 .kink:not(:last-child) {
-    border-bottom: 2px solid black;
+    border-bottom: 1.5px solid #2D1D2D;
 }
 
 .kink p {
@@ -84,5 +84,6 @@ svg.icon {
 }
 
 .kink p:first-child {
-    font-size: 120%;
+    font-size: 105%;
+    color: #FFECFF;
 }
