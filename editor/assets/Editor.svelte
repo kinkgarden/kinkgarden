@@ -17,7 +17,7 @@
     </div>
     {/each}
 </article>
-<form method="post" on:submit={submitForm}>
+<form method="post" action={action} on:submit={submitForm}>
     <input type="hidden" name="kink-list-data" value="">
     <input type="hidden" name="csrfmiddlewaretoken" value="">
     <fieldset>
@@ -51,13 +51,18 @@
         }
     }
 
-    export let initData = [
-        {name: "heart", kinks: []},
-        {name: "check", kinks: []},
-        {name: "tilde", kinks: []},
-        {name: "no", kinks: []}
-    ];
-    let columns = initData;
+    export let initData = {
+        columns: [
+            {name: "heart", kinks: []},
+            {name: "check", kinks: []},
+            {name: "tilde", kinks: []},
+            {name: "no", kinks: []}
+        ],
+        action: '',
+    };
+    let columns = initData.columns;
+    const action = initData.action;
+    console.log(columns, action);
     export let dbData;
     let selectedCategory = null;
 
