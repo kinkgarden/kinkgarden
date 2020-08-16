@@ -123,4 +123,3 @@ dmypy.json
 
 # npm stuff
 /node_modules
-package-lock.json

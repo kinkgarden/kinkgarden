@@ -6,6 +6,8 @@ before_script:
   - chmod +x ./cc-test-reporter
   - ./cc-test-reporter before-build
 script:
+  - npm install
+  - npm run build
   - python manage.py collectstatic
   - coverage run manage.py test
   - coverage xml
