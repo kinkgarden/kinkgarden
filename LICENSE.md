@@ -1,11 +1,52 @@
-# the fuck around and find out license v0.1
+# The Fuck Around and Find Out License, version 0.2
 
-copyright (c) 2020 Melody Horn
+## Purpose
 
-permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "software"), to deal in the software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the software, and to permit persons to whom the software is furnished to do so, subject to the following conditions:
+This license gives everyone as much permission to work with
+this software as possible, while protecting contributors
+from liability, and ensuring this software is used
+ethically.
 
-the above copyright notice and this permission notice shall be included in all copies or substantial portions of the software.
+## Acceptance
 
-the software shall be used for Good, not Evil. the original author of the software retains the sole and exclusive right to determine which uses are Good and which uses are Evil.
+In order to receive this license, you must agree to its
+rules.  The rules of this license are both obligations
+under that agreement and conditions to your license.
+You must not do anything with this software that triggers
+a rule that you cannot or will not follow.
 
-the software is provided "as is", without warranty of any kind, express or implied, including but not limited to the warranties of merchantability, fitness for a particular purpose and noninfringement. in no event shall the authors or copyright holders be liable for any claim, damages or other liability, whether in an action of contract, tort or otherwise, arising from, out of or in connection with the software or the use or other dealings in the software.
+## Copyright
+
+Each contributor licenses you to do everything with this
+software that would otherwise infringe that contributor's
+copyright in it.
+
+## Ethics
+
+This software must be used for Good, not Evil, as
+determined by the primary contributors to the software.
+
+## Excuse
+
+If anyone notifies you in writing that you have not
+complied with [Ethics](#ethics), you can keep your
+license by taking all practical steps to comply within 30
+days after the notice.  If you do not do so, your license
+ends immediately.
+
+## Patent
+
+Each contributor licenses you to do everything with this
+software that would otherwise infringe any patent claims
+they can license or become able to license.
+
+## Reliability
+
+No contributor can revoke this license.
+
+## No Liability
+
+***As far as the law allows, this software comes as is,
+without any warranty or condition, and no contributor
+will be liable to anyone for any damages related to this
+software or this license, under any kind of legal claim.***
