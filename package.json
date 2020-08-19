@@ -8,6 +8,8 @@
     "watch": "cd editor && webpack --config webpack.config.js --progress --colors --watch"
   },
   "devDependencies": {
+    "css-loader": "^4.2.1",
+    "mini-css-extract-plugin": "^0.10.0",
     "svelte": "3.24.0",
     "svelte-loader": "2.13.6",
     "webpack": "4.44.1",

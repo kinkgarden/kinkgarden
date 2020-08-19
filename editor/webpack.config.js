@@ -1,6 +1,7 @@
 var path = require("path");
 var webpack = require('webpack');
 var BundleTracker = require('webpack-bundle-tracker');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 module.exports = {
     context: __dirname,
@@ -16,6 +17,7 @@ module.exports = {
 
     plugins: [
         new BundleTracker({filename: './webpack-stats.json'}),
+        new MiniCssExtractPlugin({filename: "[name]-[hash].css"}),
     ],
 
     resolve: {
@@ -30,10 +32,14 @@ module.exports = {
                 use: {
                     loader: 'svelte-loader',
                     options: {
-                        css: false
+                        emitCss: true,
                     }
                 }
             },
+            {
+                test: /\.css$/,
+                use: [MiniCssExtractPlugin.loader, 'css-loader'],
+            }
         ]
     },
 };

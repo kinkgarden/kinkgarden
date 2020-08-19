@@ -13,3 +13,31 @@
     {/each}
     </ul>
 </div>
+
+<style>
+    .category-menu {
+        flex: 1 0 0;
+        display: flex;
+        flex-flow: column nowrap;
+    }
+
+    .category-menu ul {
+        list-style: none;
+        padding-left: 0;
+    }
+
+    .category-menu ul li {
+        padding: 0.5em;
+        cursor: pointer;
+    }
+
+    .category-menu ul li:hover {
+        background-color: #B347CC;
+        color: #ffffff;
+    }
+
+    .category-menu ul li.selected {
+        background-color: #743582;
+        color: #FFECFF;
+    }
+</style>

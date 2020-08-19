@@ -161,3 +161,18 @@
         form.elements['csrfmiddlewaretoken'].value = Cookies.get('csrftoken');
     }
 </script>
+
+<style>
+    article {
+        display: flex;
+        flex-flow: row;
+    }
+    aside {
+        flex: 2 0 0;
+        display: flex;
+        flex-flow: row nowrap;
+        justify-content: space-between;
+        align-items: stretch;
+        height: 100%;
+    }
+</style>

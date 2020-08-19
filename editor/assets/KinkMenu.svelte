@@ -40,3 +40,63 @@
         {/each}
     </div>
 </div>
+
+<style>
+    .kink-menu {
+        flex: 1 0 0;
+        display: flex;
+        flex-flow: column nowrap;
+    }
+
+    .kinks.menu-kinks {
+        overflow-y: auto;
+    }
+
+    .kinks.menu-kinks p.description {
+        display: unset;
+    }
+
+    .kink {
+        position: relative;
+    }
+
+    .kink.selected > :not(.shortcuts) {
+        opacity: 0.6;
+        color: #6A3772;
+    }
+
+    .kink .shortcuts {
+        position: absolute;
+        top: 0;
+        right: 0;
+
+        --icon-size: 14px;
+        --margin-size: 1px;
+
+        --grid-size: calc(var(--icon-size) + 2 * var(--margin-size));
+
+        display: grid;
+        grid-template-columns: var(--grid-size) var(--grid-size);
+        grid-template-rows: var(--grid-size) var(--grid-size);
+    }
+
+    .kink .shortcut {
+        padding: 0;
+        margin: 0;
+        border-width: 0;
+        background: none;
+    }
+
+    .kink .shortcut svg {
+        box-sizing: border-box;
+        padding: var(--margin-size);
+        width: 100%;
+        height: 100%;
+    }
+
+    .kink .shortcut:not(.selected) svg {
+       background-color: var(--color);
+        fill: #ffffff;
+    }
+
+</style>
