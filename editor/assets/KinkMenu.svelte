@@ -1,7 +1,14 @@
 <script>
     import { dbData, columns } from './index.js';
+    import Fuse from 'fuse.js';
     export let selectedCategory;
     export let dragstart, dragover, drop;
+
+    const fuse = new Fuse($dbData.kinks, {
+        keys: ['name', 'description']
+    })
+
+    let searchText = '';
 
     let selectedKinks;
     $: {
@@ -12,6 +19,15 @@
             selectedKinks = [];
         } else {
             selectedKinks = $dbData.kinks.filter(k => k.category_id === selectedCategory);
+        }
+    }
+
+    let searchedKinks;
+    $: {
+        if (searchText.length > 0) {
+            searchedKinks = fuse.search(searchText).map(x => x.item);
+        } else {
+            searchedKinks = selectedKinks
         }
     }
 
@@ -39,8 +55,9 @@
 
 <div class="kink-menu">
     <h2>Kinks</h2>
+    <input type="search" placeholder="Search kinks..." bind:value={searchText} aria-label="search kinks" />
     <div class="kinks menu-kinks" on:dragover|preventDefault={event => dragover(event, null)} on:drop|preventDefault={event => drop(event, null)}>
-        {#each selectedKinks as kink}
+        {#each searchedKinks as kink}
         <div class="kink" class:selected={kinkColumn[kink.id] !== undefined} draggable={kinkColumn[kink.id] === undefined ? 'true' : 'false'} on:dragstart={event => dragstart(event, true)} data-id={kink.id}>
             <p title={kink.description}>{kink.name}</p>
             <p class="description">{kink.description}</p>
@@ -126,4 +143,7 @@
         fill: #ffffff;
     }
 
+    input {
+        font: inherit;
+    }
 </style>

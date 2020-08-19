@@ -17,6 +17,7 @@
     "webpack-cli": "3.3.12"
   },
   "dependencies": {
+    "fuse.js": "^6.4.1",
     "js-cookie": "^2.2.1"
   }
 }
