@@ -6,5 +6,14 @@
     let selectedCategory;
 </script>
 
-<CategoryMenu bind:selectedCategory={selectedCategory} />
-<KinkMenu {selectedCategory} {dragstart} {dragover} {drop}  />
+<div>
+    <CategoryMenu bind:selectedCategory={selectedCategory} />
+    <KinkMenu {selectedCategory} {dragstart} {dragover} {drop}  />
+</div>
+
+<style>
+    div {
+        display: flex;
+        flex-flow: row nowrap;
+    }
+</style>

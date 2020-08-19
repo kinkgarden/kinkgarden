@@ -65,13 +65,16 @@
 
 <style>
     .kink-menu {
-        flex: 1 0 0;
+        flex: 0 1 auto;
         display: flex;
         flex-flow: column nowrap;
+
+        width: 20em;
     }
 
     .kinks.menu-kinks {
         overflow-y: auto;
+        flex: 1 1 0;
     }
 
     .kinks.menu-kinks p.description {
@@ -80,6 +83,13 @@
 
     .kink {
         position: relative;
+
+        --icon-size: 14px;
+        --margin-size: 1px;
+
+        --grid-size: calc(var(--icon-size) + 2 * var(--margin-size));
+
+        padding-right: calc(2 * var(--grid-size));
     }
 
     .kink.selected > :not(.shortcuts) {
@@ -91,11 +101,6 @@
         position: absolute;
         top: 0;
         right: 0;
-
-        --icon-size: 14px;
-        --margin-size: 1px;
-
-        --grid-size: calc(var(--icon-size) + 2 * var(--margin-size));
 
         display: grid;
         grid-template-columns: var(--grid-size) var(--grid-size);
