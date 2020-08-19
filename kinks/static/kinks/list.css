@@ -42,6 +42,8 @@ main > article > div.column {
     flex: 1 0 0;
     display: flex;
     flex-flow: column;
+
+    min-width: 10em;
 }
 
 .icon.heart {

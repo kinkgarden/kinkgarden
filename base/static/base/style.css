@@ -1,6 +1,4 @@
 body {
-    --body-width: 40em;
-    width: var(--body-width);
     margin: 0 auto;
     font-family: Candara;
 
