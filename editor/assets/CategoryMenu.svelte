@@ -1,5 +1,7 @@
 <script>
-    export let categories;
+    import { dbData } from './index.js';
+
+    let categories = $dbData.categories;
     export let selectedCategory = null;
 </script>
 

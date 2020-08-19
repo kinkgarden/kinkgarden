@@ -1,16 +1,38 @@
 <script>
-    export let selectedKinks;
-    export let columns;
+    import { dbData, columns } from './index.js';
+    export let selectedCategory;
     export let dragstart, dragover, drop;
-    export let toggleColumn;
+
+    let selectedKinks;
+    $: {
+        if (selectedCategory === null) {
+            selectedKinks = $dbData.kinks;
+        } else if (selectedCategory === 'custom') {
+            // TODO what do
+            selectedKinks = [];
+        } else {
+            selectedKinks = $dbData.kinks.filter(k => k.category_id === selectedCategory);
+        }
+    }
 
     let kinkColumn;
     $: {
         kinkColumn = {};
-        for (let columnIndex = 0; columnIndex < columns.length; columnIndex++) {
-            for (let kink of columns[columnIndex].kinks) {
+        for (let columnIndex = 0; columnIndex < $columns.length; columnIndex++) {
+            for (let kink of $columns[columnIndex].kinks) {
                 kinkColumn[kink.id] = columnIndex;
             }
+        }
+    }
+
+    function toggleColumn(id, column) {
+        if ($columns[column].kinks.some(k => k.id === id)) {
+            $columns[column].kinks = $columns[column].kinks.filter(k => k.id !== id);
+        } else {
+            $columns.forEach(c => {
+                c.kinks = c.kinks.filter(k => k.id !== id)
+            });
+            $columns[column].kinks = [...$columns[column].kinks, {custom: false, id}];
         }
     }
 </script>
