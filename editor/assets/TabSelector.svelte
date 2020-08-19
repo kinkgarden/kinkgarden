@@ -48,6 +48,7 @@
     .tab-content {
         flex: 1 1 auto;
         position: relative;
+        border: 1px solid currentColor;
     }
 
     .tab-content > :global(*) {
@@ -57,5 +58,23 @@
 
     aside nav {
         flex: 0 0 content;
+        display: flex;
+        flex-flow: column;
+        row-gap: 1em;
+        position: relative;
+        left: -1px;
+    }
+
+    nav button {
+        font: inherit;
+        color: inherit;
+        background-color: inherit;
+        border: 1px solid currentColor;
+        border-top-right-radius: 0.5em;
+        border-bottom-right-radius: 0.5em;
+    }
+
+    nav button:disabled {
+        border-left-color: #2D1D2D;
     }
 </style>
