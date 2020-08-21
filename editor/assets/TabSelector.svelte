@@ -13,20 +13,6 @@
     }
 </script>
 
-<aside class:open>
-    {#if open}
-        <div class="tab-content">
-            <svelte:component this={selection} {...$$restProps} />
-        </div>
-    {/if}
-    <nav>
-        {#each options as option, i}
-            <button type="button" disabled={selectedIndex === i && open} on:click={() => click(i)}>{option.label}</button>
-        {/each}
-        <button type="button" on:click={() => open = !open}>{open ? '←' : '→'}</button>
-    </nav>
-</aside>
-
 <style>
     aside {
         display: flex;
@@ -75,6 +61,27 @@
     }
 
     nav button:disabled {
-        border-left-color: #2D1D2D;
+        border-left-color: #2d1d2d;
     }
 </style>
+
+<aside class:open>
+    {#if open}
+        <div class="tab-content">
+            <svelte:component this={selection} {...$$restProps} />
+        </div>
+    {/if}
+    <nav>
+        {#each options as option, i}
+            <button
+                type="button"
+                disabled={selectedIndex === i && open}
+                on:click={() => click(i)}>
+                {option.label}
+            </button>
+        {/each}
+        <button type="button" on:click={() => (open = !open)}>
+            {open ? '←' : '→'}
+        </button>
+    </nav>
+</aside>

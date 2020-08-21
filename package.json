@@ -1,23 +1,25 @@
 {
-  "name": "kinkgarden",
-  "version": "1.0.0",
-  "description": "",
-  "private": true,
-  "scripts": {
-    "build": "cd editor && webpack --config webpack.config.js --progress --colors",
-    "watch": "cd editor && webpack --config webpack.config.js --progress --colors --watch"
-  },
-  "devDependencies": {
-    "css-loader": "^4.2.1",
-    "mini-css-extract-plugin": "^0.10.0",
-    "svelte": "3.24.0",
-    "svelte-loader": "2.13.6",
-    "webpack": "4.44.1",
-    "webpack-bundle-tracker": "0.4.2-beta",
-    "webpack-cli": "3.3.12"
-  },
-  "dependencies": {
-    "fuse.js": "^6.4.1",
-    "js-cookie": "^2.2.1"
-  }
+    "name": "kinkgarden",
+    "version": "1.0.0",
+    "description": "",
+    "private": true,
+    "scripts": {
+        "build": "cd editor && webpack --config webpack.config.js --progress --colors",
+        "watch": "cd editor && webpack --config webpack.config.js --progress --colors --watch"
+    },
+    "devDependencies": {
+        "css-loader": "^4.2.1",
+        "mini-css-extract-plugin": "^0.10.0",
+        "prettier": "2.0.5",
+        "prettier-plugin-svelte": "1.1.0",
+        "svelte": "3.24.0",
+        "svelte-loader": "2.13.6",
+        "webpack": "4.44.1",
+        "webpack-bundle-tracker": "0.4.2-beta",
+        "webpack-cli": "3.3.12"
+    },
+    "dependencies": {
+        "fuse.js": "^6.4.1",
+        "js-cookie": "^2.2.1"
+    }
 }

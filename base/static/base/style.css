@@ -3,14 +3,14 @@ body {
     font-family: Candara;
 
     line-height: 1.8;
-    color: #BCA7BE;
-    background-color: #2D1D2D;
+    color: #bca7be;
+    background-color: #2d1d2d;
     font-size: 130%;
     max-width: 50rem;
 }
 
 a {
-    color: #B4BEA7;
+    color: #b4bea7;
 }
 
 #logo {

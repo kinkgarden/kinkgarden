@@ -8,61 +8,114 @@ import uuid
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('kinks', '0005_remove_kink_custom'),
+        ("kinks", "0005_remove_kink_custom"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='KinkList',
+            name="KinkList",
             fields=[
-                ('id', models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False)),
-                ('view_password', models.CharField(blank=True, max_length=128)),
-                ('edit_password', models.CharField(blank=True, max_length=128)),
+                (
+                    "id",
+                    models.UUIDField(
+                        default=uuid.uuid4,
+                        editable=False,
+                        primary_key=True,
+                        serialize=False,
+                    ),
+                ),
+                ("view_password", models.CharField(blank=True, max_length=128)),
+                ("edit_password", models.CharField(blank=True, max_length=128)),
             ],
         ),
         migrations.AlterModelOptions(
-            name='kinkcategory',
-            options={'verbose_name_plural': 'kink categories'},
+            name="kinkcategory", options={"verbose_name_plural": "kink categories"},
         ),
         migrations.AlterField(
-            model_name='kink',
-            name='category',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, to='kinks.kinkcategory'),
+            model_name="kink",
+            name="category",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.SET_NULL,
+                to="kinks.kinkcategory",
+            ),
         ),
         migrations.AlterField(
-            model_name='kink',
-            name='description',
+            model_name="kink",
+            name="description",
             field=models.TextField(blank=True, max_length=1000),
         ),
         migrations.AlterField(
-            model_name='kinkcategory',
-            name='description',
+            model_name="kinkcategory",
+            name="description",
             field=models.TextField(blank=True, max_length=1000),
         ),
         migrations.CreateModel(
-            name='StandardKinkListEntry',
+            name="StandardKinkListEntry",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('column', models.SmallIntegerField(choices=[(1, 'heart'), (2, 'check'), (3, 'tilde'), (4, 'no')])),
-                ('kink', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='+', to='kinks.kink')),
-                ('list', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='kinks.kinklist')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "column",
+                    models.SmallIntegerField(
+                        choices=[(1, "heart"), (2, "check"), (3, "tilde"), (4, "no")]
+                    ),
+                ),
+                (
+                    "kink",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="+",
+                        to="kinks.kink",
+                    ),
+                ),
+                (
+                    "list",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE, to="kinks.kinklist"
+                    ),
+                ),
             ],
-            options={
-                'abstract': False,
-            },
+            options={"abstract": False,},
         ),
         migrations.CreateModel(
-            name='CustomKinkListEntry',
+            name="CustomKinkListEntry",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('column', models.SmallIntegerField(choices=[(1, 'heart'), (2, 'check'), (3, 'tilde'), (4, 'no')])),
-                ('custom_name', models.CharField(blank=True, max_length=200)),
-                ('custom_description', models.CharField(blank=True, max_length=1000)),
-                ('admin_delete', models.BooleanField(default=False)),
-                ('list', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='kinks.kinklist')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "column",
+                    models.SmallIntegerField(
+                        choices=[(1, "heart"), (2, "check"), (3, "tilde"), (4, "no")]
+                    ),
+                ),
+                ("custom_name", models.CharField(blank=True, max_length=200)),
+                ("custom_description", models.CharField(blank=True, max_length=1000)),
+                ("admin_delete", models.BooleanField(default=False)),
+                (
+                    "list",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE, to="kinks.kinklist"
+                    ),
+                ),
             ],
-            options={
-                'abstract': False,
-            },
+            options={"abstract": False,},
         ),
     ]

@@ -1,20 +1,9 @@
 <script>
-    import { dbData } from './index.js';
+    import { dbData } from "./index.js";
 
     let categories = $dbData.categories;
     export let selectedCategory = null;
 </script>
-
-<div class="category-menu">
-    <h2>Categories</h2>
-    <div class="categories">
-        <div class="category" class:selected={selectedCategory === null} on:click={_ => selectedCategory = null}>all kinks</div>
-        <div class="category" class:selected={selectedCategory === 'custom'} on:click={_ => selectedCategory = 'custom'}>custom kinks</div>
-    {#each categories as category}
-        <div class="category" class:selected={selectedCategory === category.id} on:click={_ => selectedCategory = category.id}>{category.name}</div>
-    {/each}
-    </div>
-</div>
 
 <style>
     .category-menu {
@@ -34,12 +23,38 @@
     }
 
     .category-menu .category:hover {
-        background-color: #B347CC;
+        background-color: #b347cc;
         color: #ffffff;
     }
 
     .category-menu .category.selected {
         background-color: #743582;
-        color: #FFECFF;
+        color: #ffecff;
     }
 </style>
+
+<div class="category-menu">
+    <h2>Categories</h2>
+    <div class="categories">
+        <div
+            class="category"
+            class:selected={selectedCategory === null}
+            on:click={(_) => (selectedCategory = null)}>
+            all kinks
+        </div>
+        <div
+            class="category"
+            class:selected={selectedCategory === 'custom'}
+            on:click={(_) => (selectedCategory = 'custom')}>
+            custom kinks
+        </div>
+        {#each categories as category}
+            <div
+                class="category"
+                class:selected={selectedCategory === category.id}
+                on:click={(_) => (selectedCategory = category.id)}>
+                {category.name}
+            </div>
+        {/each}
+    </div>
+</div>

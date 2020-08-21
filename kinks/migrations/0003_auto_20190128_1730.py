@@ -7,26 +7,38 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('kinks', '0002_auto_20190128_1658'),
+        ("kinks", "0002_auto_20190128_1658"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='KinkCategory',
+            name="KinkCategory",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=200, unique=True)),
-                ('description', models.TextField(max_length=1000)),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=200, unique=True)),
+                ("description", models.TextField(max_length=1000)),
             ],
         ),
         migrations.AlterField(
-            model_name='kink',
-            name='name',
+            model_name="kink",
+            name="name",
             field=models.CharField(max_length=200, unique=True),
         ),
         migrations.AddField(
-            model_name='kink',
-            name='category',
-            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, to='kinks.KinkCategory'),
+            model_name="kink",
+            name="category",
+            field=models.ForeignKey(
+                null=True,
+                on_delete=django.db.models.deletion.SET_NULL,
+                to="kinks.KinkCategory",
+            ),
         ),
     ]

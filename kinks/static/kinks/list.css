@@ -83,7 +83,7 @@ svg.icon {
 }
 
 .kink:not(:last-child) {
-    border-bottom: 1.5px solid #2D1D2D;
+    border-bottom: 1.5px solid #2d1d2d;
 }
 
 .kink p {
@@ -93,5 +93,5 @@ svg.icon {
 
 .kink p:first-child {
     font-size: 105%;
-    color: #FFECFF;
+    color: #ffecff;
 }

@@ -21,13 +21,14 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/2.1/howto/deployment/checklist/
 
 # SECRET_KEY = ''
-if 'SECRET_KEY' in os.environ:
-    SECRET_KEY = os.environ['SECRET_KEY']
+if "SECRET_KEY" in os.environ:
+    SECRET_KEY = os.environ["SECRET_KEY"]
 
 # DEBUG = True
-if 'DEBUG_UNTIL' in os.environ:
+if "DEBUG_UNTIL" in os.environ:
     from datetime import datetime
-    until = datetime.fromisoformat(os.environ['DEBUG_UNTIL'])
+
+    until = datetime.fromisoformat(os.environ["DEBUG_UNTIL"])
     now = datetime.utcnow()
     if now < until:
         DEBUG = True
@@ -38,58 +39,58 @@ if 'DEBUG_UNTIL' in os.environ:
 # Application definition
 
 INSTALLED_APPS = [
-    'whitenoise.runserver_nostatic',
-    'base.apps.BaseConfig',
-    'kinks.apps.KinksConfig',
-    'editor.apps.EditorConfig',
-    'django.contrib.admin',
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.messages',
-    'django.contrib.staticfiles',
-    'webpack_loader',
+    "whitenoise.runserver_nostatic",
+    "base.apps.BaseConfig",
+    "kinks.apps.KinksConfig",
+    "editor.apps.EditorConfig",
+    "django.contrib.admin",
+    "django.contrib.auth",
+    "django.contrib.contenttypes",
+    "django.contrib.sessions",
+    "django.contrib.messages",
+    "django.contrib.staticfiles",
+    "webpack_loader",
 ]
 
 MIDDLEWARE = [
-    'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'base.middleware.RTAMiddleware',
-    'base.middleware.AgeGateMiddleware',
+    "django.middleware.security.SecurityMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
+    "django.contrib.sessions.middleware.SessionMiddleware",
+    "django.middleware.common.CommonMiddleware",
+    "django.middleware.csrf.CsrfViewMiddleware",
+    "django.contrib.auth.middleware.AuthenticationMiddleware",
+    "django.contrib.messages.middleware.MessageMiddleware",
+    "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "base.middleware.RTAMiddleware",
+    "base.middleware.AgeGateMiddleware",
 ]
 
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
-ROOT_URLCONF = 'kinkgarden.urls'
+ROOT_URLCONF = "kinkgarden.urls"
 
 TEMPLATES = [
     {
-        'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'kinks/templates')],
-        'APP_DIRS': True,
-        'OPTIONS': {
-            'context_processors': [
-                'django.template.context_processors.debug',
-                'django.template.context_processors.request',
-                'django.contrib.auth.context_processors.auth',
-                'django.contrib.messages.context_processors.messages',
+        "BACKEND": "django.template.backends.django.DjangoTemplates",
+        "DIRS": [os.path.join(BASE_DIR, "kinks/templates")],
+        "APP_DIRS": True,
+        "OPTIONS": {
+            "context_processors": [
+                "django.template.context_processors.debug",
+                "django.template.context_processors.request",
+                "django.contrib.auth.context_processors.auth",
+                "django.contrib.messages.context_processors.messages",
             ],
         },
     },
 ]
 
-WSGI_APPLICATION = 'kinkgarden.wsgi.application'
+WSGI_APPLICATION = "kinkgarden.wsgi.application"
 
 WEBPACK_LOADER = {
-    'DEFAULT': {
-        'BUNDLE_DIR_NAME': 'editor/',
-        'STATS_FILE': os.path.join(BASE_DIR, 'editor', 'webpack-stats.json'),
+    "DEFAULT": {
+        "BUNDLE_DIR_NAME": "editor/",
+        "STATS_FILE": os.path.join(BASE_DIR, "editor", "webpack-stats.json"),
     }
 }
 
@@ -104,32 +105,26 @@ WEBPACK_LOADER = {
 
 AUTH_PASSWORD_VALIDATORS = [
     {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+        "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
     },
-    {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
-    },
+    {"NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",},
+    {"NAME": "django.contrib.auth.password_validation.CommonPasswordValidator",},
+    {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",},
 ]
 
 PASSWORD_HASHERS = [
-    'django.contrib.auth.hashers.Argon2PasswordHasher',
-    'django.contrib.auth.hashers.PBKDF2PasswordHasher',
-    'django.contrib.auth.hashers.PBKDF2SHA1PasswordHasher',
-    'django.contrib.auth.hashers.BCryptSHA256PasswordHasher',
+    "django.contrib.auth.hashers.Argon2PasswordHasher",
+    "django.contrib.auth.hashers.PBKDF2PasswordHasher",
+    "django.contrib.auth.hashers.PBKDF2SHA1PasswordHasher",
+    "django.contrib.auth.hashers.BCryptSHA256PasswordHasher",
 ]
 
 # Internationalization
 # https://docs.djangoproject.com/en/2.1/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = "en-us"
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = "UTC"
 
 USE_I18N = True
 
@@ -141,20 +136,20 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
 
-STATIC_URL = '/static/'
+STATIC_URL = "/static/"
 
 # Mail setup if given in environment
-if 'EMAIL_HOST' in os.environ:
-    EMAIL_HOST = os.environ['EMAIL_HOST']
-if 'EMAIL_HOST_USER' in os.environ:
-    EMAIL_HOST_USER = os.environ['EMAIL_HOST_USER']
+if "EMAIL_HOST" in os.environ:
+    EMAIL_HOST = os.environ["EMAIL_HOST"]
+if "EMAIL_HOST_USER" in os.environ:
+    EMAIL_HOST_USER = os.environ["EMAIL_HOST_USER"]
     SERVER_EMAIL = EMAIL_HOST_USER
-if 'EMAIL_HOST_PASSWORD' in os.environ:
-    EMAIL_HOST_PASSWORD = os.environ['EMAIL_HOST_PASSWORD']
+if "EMAIL_HOST_PASSWORD" in os.environ:
+    EMAIL_HOST_PASSWORD = os.environ["EMAIL_HOST_PASSWORD"]
 EMAIL_USE_TLS = True
 EMAIL_PORT = 587
-if 'ADMINS' in os.environ:
-    ADMINS = list(tuple(x.split(' ')) for x in os.environ['ADMINS'].split(','))
+if "ADMINS" in os.environ:
+    ADMINS = list(tuple(x.split(" ")) for x in os.environ["ADMINS"].split(","))
 
 # let local_settings override what's here
 try:
@@ -162,5 +157,5 @@ try:
 except ImportError:
     pass
 
-if 'CI' not in os.environ:
+if "CI" not in os.environ:
     django_heroku.settings(locals())

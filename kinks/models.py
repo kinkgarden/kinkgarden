@@ -20,13 +20,15 @@ class KinkCategory(models.Model):
 class Kink(models.Model):
     name = models.CharField(max_length=200)
     description = models.TextField(max_length=1000, blank=True)
-    category = models.ForeignKey(KinkCategory, on_delete=models.SET_NULL, null=True, blank=True)
+    category = models.ForeignKey(
+        KinkCategory, on_delete=models.SET_NULL, null=True, blank=True
+    )
 
     def __str__(self):
         return self.name
 
 
-ConcreteKink = namedtuple('ConcreteKink', ['name', 'description'])
+ConcreteKink = namedtuple("ConcreteKink", ["name", "description"])
 
 
 class KinkListColumn(enum.Enum):
@@ -44,20 +46,28 @@ class KinkList(models.Model):
 
     def get_absolute_url(self):
         from django.urls import reverse
-        return reverse('kinks:kink_list', args=(self.id,))
+
+        return reverse("kinks:kink_list", args=(self.id,))
 
     @property
     def columns(self) -> typing.List[typing.Tuple[str, typing.List[ConcreteKink]]]:
-        standard_kinks = self.standardkinklistentry_set.all().select_related('kink')
+        standard_kinks = self.standardkinklistentry_set.all().select_related("kink")
         custom_kinks = self.customkinklistentry_set.all()
 
         column_data = dict((x, []) for x in KinkListColumn)
         for kink in standard_kinks:
-            column_data[KinkListColumn(kink.column)].append(ConcreteKink(kink.kink.name, kink.kink.description))
+            column_data[KinkListColumn(kink.column)].append(
+                ConcreteKink(kink.kink.name, kink.kink.description)
+            )
         for kink in custom_kinks:
-            column_data[KinkListColumn(kink.column)].append(ConcreteKink(kink.custom_name, kink.custom_description))
+            column_data[KinkListColumn(kink.column)].append(
+                ConcreteKink(kink.custom_name, kink.custom_description)
+            )
 
-        return [(column_type.name.lower(), sorted(column_content, key=lambda x: x.name)) for column_type, column_content in column_data.items()]
+        return [
+            (column_type.name.lower(), sorted(column_content, key=lambda x: x.name))
+            for column_type, column_content in column_data.items()
+        ]
 
 
 class KinkListEntry(models.Model):
@@ -72,11 +82,15 @@ class KinkListEntry(models.Model):
 
 
 class StandardKinkListEntry(KinkListEntry):
-    kink = models.ForeignKey(Kink, on_delete=models.CASCADE, related_name='+', null=True, blank=True)
+    kink = models.ForeignKey(
+        Kink, on_delete=models.CASCADE, related_name="+", null=True, blank=True
+    )
 
     class Meta:
         constraints = [
-            models.UniqueConstraint(fields=['list', 'kink'], name='unique_standard_kinks')
+            models.UniqueConstraint(
+                fields=["list", "kink"], name="unique_standard_kinks"
+            )
         ]
 
 
@@ -87,5 +101,7 @@ class CustomKinkListEntry(KinkListEntry):
 
     class Meta:
         constraints = [
-            models.UniqueConstraint(fields=['list', 'custom_name'], name='unique_custom_kinks')
+            models.UniqueConstraint(
+                fields=["list", "custom_name"], name="unique_custom_kinks"
+            )
         ]

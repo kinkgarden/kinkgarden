@@ -1,19 +1,19 @@
 language: python
 python:
-  - "3.7"
+    - "3.7"
 before_script:
-  - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
-  - chmod +x ./cc-test-reporter
-  - ./cc-test-reporter before-build
+    - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+    - chmod +x ./cc-test-reporter
+    - ./cc-test-reporter before-build
 script:
-  - npm install
-  - npm run build
-  - python manage.py collectstatic
-  - coverage run manage.py test
-  - coverage xml
+    - npm install
+    - npm run build
+    - python manage.py collectstatic
+    - coverage run manage.py test
+    - coverage xml
 after_script:
-  - ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT
+    - ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT
 env:
-  global:
-    - DJANGO_SETTINGS_MODULE=kinkgarden.ci_settings
-    - CC_TEST_REPORTER_ID=a696ad931c8a83cc887275e8ce142ed64ad579b4d2fa0110fe74c4627e8d5279
+    global:
+        - DJANGO_SETTINGS_MODULE=kinkgarden.ci_settings
+        - CC_TEST_REPORTER_ID=a696ad931c8a83cc887275e8ce142ed64ad579b4d2fa0110fe74c4627e8d5279

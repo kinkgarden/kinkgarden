@@ -6,18 +6,14 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('kinks', '0003_auto_20190128_1730'),
+        ("kinks", "0003_auto_20190128_1730"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='kink',
-            name='custom',
-            field=models.BooleanField(default=False),
+            model_name="kink", name="custom", field=models.BooleanField(default=False),
         ),
         migrations.AlterField(
-            model_name='kink',
-            name='name',
-            field=models.CharField(max_length=200),
+            model_name="kink", name="name", field=models.CharField(max_length=200),
         ),
     ]

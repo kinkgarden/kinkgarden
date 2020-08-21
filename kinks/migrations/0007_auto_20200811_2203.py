@@ -6,21 +6,25 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('kinks', '0006_auto_20200811_1100'),
+        ("kinks", "0006_auto_20200811_1100"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='kinklist',
-            name='example',
+            model_name="kinklist",
+            name="example",
             field=models.BooleanField(default=False),
         ),
         migrations.AddConstraint(
-            model_name='customkinklistentry',
-            constraint=models.UniqueConstraint(fields=('list', 'custom_name'), name='unique_custom_kinks'),
+            model_name="customkinklistentry",
+            constraint=models.UniqueConstraint(
+                fields=("list", "custom_name"), name="unique_custom_kinks"
+            ),
         ),
         migrations.AddConstraint(
-            model_name='standardkinklistentry',
-            constraint=models.UniqueConstraint(fields=('list', 'kink'), name='unique_standard_kinks'),
+            model_name="standardkinklistentry",
+            constraint=models.UniqueConstraint(
+                fields=("list", "kink"), name="unique_standard_kinks"
+            ),
         ),
     ]

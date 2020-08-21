@@ -1,0 +1,6 @@
+htmlcov
+node_modules
+staticfiles
+venv
+editor/static
+**/templates/**/*.html
