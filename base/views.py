@@ -1,8 +1,10 @@
 from django.http import HttpRequest
 from django.shortcuts import render, redirect
+from django.utils.decorators import method_decorator
 from django.views import generic
 
 from kinks.models import Kink, KinkList
+from .middleware import ignore_age_gate
 
 
 def home_view(request):
@@ -19,6 +21,7 @@ def home_view(request):
     )
 
 
+@method_decorator(ignore_age_gate, name="dispatch")
 class PrivacyPolicyView(generic.TemplateView):
     template_name = "base/privacy_policy.html"
 
@@ -27,6 +30,7 @@ def error_handling_test_view(request):
     raise RuntimeError("Testing error handling")
 
 
+@ignore_age_gate
 def age_gate_view(request: HttpRequest):
     if "age-gate-accept" in request.POST:
         return None

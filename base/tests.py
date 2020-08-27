@@ -19,6 +19,11 @@ class AgeGateMiddlewareTests(TestCase):
         response = client.get(reverse("kinks:kink_list_new"))
         self.assertTemplateUsed(response, "base/age-gate.html")
 
+    def test_privacy_policy_skips_age_gate(self):
+        client = Client()
+        response = client.get(reverse("base:privacy-policy"))
+        self.assertTemplateUsed(response, "base/privacy_policy.html")
+
     def test_age_gate_accept_removes_persistently(self):
         client = Client()
         response = client.get("/")
