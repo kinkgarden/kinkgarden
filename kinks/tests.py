@@ -421,3 +421,62 @@ class KinkListEditTests(TestCase):
             reverse("kinks:kink_list_save", args=(kink_list2.id,)), editor_data
         )
         self.assertRedirects(response, kink_list2.get_absolute_url())
+
+    def test_password_editing(self):
+        orig_edit_password = "very_insecure"
+        list_args = dict(edit_password=make_password(orig_edit_password))
+        (
+            custom_description,
+            custom_name,
+            kink_list,
+            standard_description,
+            standard_name,
+        ) = make_test_data(list_args)
+        view_password = "insecure"
+        edit_password = "also_insecure"
+
+        response = self.client.get(kink_list.get_absolute_url())
+        self.assertContains(response, standard_name)
+        self.assertContains(response, custom_name)
+
+        self.client.post(
+            reverse("kinks:kink_list_edit", args=(kink_list.id,)),
+            {"edit-password": orig_edit_password},
+        )
+
+        editor_data = {
+            "view-password": view_password,
+            "edit-password": edit_password,
+            "kink-list-data": json.dumps(
+                [
+                    {
+                        "name": "heart",
+                        "kinks": [{"custom": False, "id": Kink.objects.get().id}],
+                    },
+                    {"name": "check", "kinks": []},
+                    {"name": "tilde", "kinks": []},
+                    {
+                        "name": "no",
+                        "kinks": [
+                            {
+                                "custom": True,
+                                "name": custom_name,
+                                "description": custom_description,
+                            }
+                        ],
+                    },
+                ]
+            ),
+        }
+
+        response = self.client.post(
+            reverse("kinks:kink_list_save", args=(kink_list.id,)), editor_data
+        )
+        self.assertRedirects(
+            response, kink_list.get_absolute_url(), target_status_code=403
+        )
+
+        kink_list.refresh_from_db()
+
+        self.assertTrue(check_password(view_password, kink_list.view_password))
+        self.assertTrue(check_password(edit_password, kink_list.edit_password))

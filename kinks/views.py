@@ -1,8 +1,10 @@
 import json
 
 from django.core.exceptions import PermissionDenied
+from django.db import transaction
 from django.http import HttpResponseRedirect, Http404
 from django.shortcuts import render
+from django.utils.decorators import method_decorator
 from django.views import generic
 from django.urls import reverse
 from django.contrib.auth.hashers import check_password, make_password
@@ -34,6 +36,10 @@ class KinkListView(PasswordProtectedMixin, generic.DetailView):
     password_field = "view-password"
     password_form_template = "kinks/enter_view_password.html"
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.object = None
+
     def get(self, request, *args, **kwargs):
         try:
             self.object = self.get_object()
@@ -48,6 +54,7 @@ class KinkListView(PasswordProtectedMixin, generic.DetailView):
     post = get
 
 
+@method_decorator(transaction.atomic, name="dispatch")
 class KinkListCreate(EditorView):
     def post(self, request, *args, **kwargs):
         list_data = json.loads(request.POST["kink-list-data"])
@@ -104,6 +111,10 @@ class KinkListEdit(PasswordProtectedMixin, EditorView):
     password_field = "edit-password"
     password_form_template = "kinks/enter_edit_password.html"
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.object = None
+
     def get(self, request, *args, **kwargs):
         return self.bad_password(request)
 
@@ -141,11 +152,19 @@ class KinkListEdit(PasswordProtectedMixin, EditorView):
         return context
 
 
+@method_decorator(transaction.atomic, name="dispatch")
 class KinkListSave(generic.View):
     def post(self, request, *args, **kwargs):
         pop_edit_target(request.session, str(kwargs["pk"]))
         list_data = json.loads(request.POST["kink-list-data"])
         kink_list = KinkList.objects.get(id=kwargs["pk"])
+        view_password = request.POST["view-password"]
+        if len(view_password) > 0:
+            kink_list.view_password = make_password(view_password)
+        edit_password = request.POST["edit-password"]
+        if len(edit_password) > 0:
+            kink_list.edit_password = make_password(edit_password)
+        kink_list.save()
 
         # this probably could be better.
         new_standard_ids = set(
