@@ -1,11 +1,39 @@
+@font-face {
+    font-family: "Open Sans";
+    src: url("OpenSans-Regular-webfont.woff") format("woff");
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: "Open Sans";
+    src: url("OpenSans-Bold-webfont.woff") format("woff");
+    font-weight: bold;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: "Open Sans";
+    src: url("OpenSans-Italic-webfont.woff") format("woff");
+    font-weight: normal;
+    font-style: italic;
+}
+
+@font-face {
+    font-family: "Open Sans";
+    src: url("OpenSans-Light-webfont.woff") format("woff");
+    font-weight: 300;
+    font-style: normal;
+}
+
 body {
     margin: 0 auto;
-    font-family: Candara;
+    font-family: "Open Sans", sans-serif;
 
     line-height: 1.8;
     color: #bca7be;
     background-color: #2d1d2d;
-    font-size: 130%;
+    font-size: 120%;
     max-width: 50rem;
 }
 

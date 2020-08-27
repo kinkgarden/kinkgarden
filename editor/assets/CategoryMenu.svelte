@@ -7,7 +7,7 @@
 
 <style>
     .category-menu {
-        flex: 1 0 0;
+        flex: 0 0 12em;
         display: flex;
         flex-flow: column nowrap;
     }

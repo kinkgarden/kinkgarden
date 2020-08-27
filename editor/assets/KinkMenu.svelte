@@ -95,7 +95,7 @@
 
     .kink.selected > :not(.shortcuts) {
         opacity: 0.6;
-        color: #6a3772;
+        font-weight: lighter;
     }
 
     .kink .shortcuts {
