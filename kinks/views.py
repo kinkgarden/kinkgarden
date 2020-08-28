@@ -182,12 +182,12 @@ class KinkListSave(generic.View):
         view_password = request.POST["view-password"]
         if len(view_password) > 0:
             kink_list.view_password = make_password(view_password)
-        elif request.POST["clear-view-password"]:
+        elif request.POST.get("clear-view-password", "") == "on":
             kink_list.view_password = ""
         edit_password = request.POST["edit-password"]
         if len(edit_password) > 0:
             kink_list.edit_password = make_password(edit_password)
-        elif request.POST["clear-edit-password"]:
+        elif request.POST.get("clear-edit-password", "") == "on":
             kink_list.edit_password = ""
         kink_list.save()
 
