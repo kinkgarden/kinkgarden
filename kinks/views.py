@@ -6,6 +6,7 @@ from django.http import HttpResponseRedirect, Http404
 from django.shortcuts import render
 from django.utils.decorators import method_decorator
 from django.views import generic
+from django.views.decorators.debug import sensitive_variables, sensitive_post_parameters
 from django.urls import reverse
 from django.contrib.auth.hashers import check_password, make_password
 
@@ -30,6 +31,9 @@ class PasswordProtectedMixin:
         return check_password(self.submitted_password(request), encoded)
 
 
+@method_decorator(
+    sensitive_post_parameters("view-password"), name="dispatch",
+)
 class KinkListView(PasswordProtectedMixin, generic.DetailView):
     model = KinkList
     template_name = "kinks/list.html"
@@ -56,7 +60,14 @@ class KinkListView(PasswordProtectedMixin, generic.DetailView):
     post = get
 
 
-@method_decorator(transaction.atomic, name="dispatch")
+@method_decorator(
+    [
+        transaction.atomic,
+        sensitive_post_parameters("view-password", "edit-password"),
+        sensitive_variables("view_password", "edit_password"),
+    ],
+    name="dispatch",
+)
 class KinkListCreate(EditorView):
     def post(self, request, *args, **kwargs):
         list_data = json.loads(request.POST["kink-list-data"])
@@ -109,6 +120,7 @@ def pop_edit_target(session, list_id):
     session["edit-target"] = targets
 
 
+@method_decorator(sensitive_post_parameters("edit-password"), name="dispatch")
 class KinkListEdit(PasswordProtectedMixin, EditorView):
     password_field = "edit-password"
     password_form_template = "kinks/enter_edit_password.html"
@@ -154,7 +166,14 @@ class KinkListEdit(PasswordProtectedMixin, EditorView):
         return context
 
 
-@method_decorator(transaction.atomic, name="dispatch")
+@method_decorator(
+    [
+        transaction.atomic,
+        sensitive_post_parameters("view-password", "edit-password"),
+        sensitive_variables("view_password", "edit_password"),
+    ],
+    name="dispatch",
+)
 class KinkListSave(generic.View):
     def post(self, request, *args, **kwargs):
         pop_edit_target(request.session, str(kwargs["pk"]))
