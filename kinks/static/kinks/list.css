@@ -95,3 +95,7 @@ svg.icon {
     font-size: 105%;
     color: #ffecff;
 }
+
+main > footer {
+    align-self: center;
+}

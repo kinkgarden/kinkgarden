@@ -22,5 +22,9 @@
             </div>
         {% endfor %}
     </article>
-    <a href="{% url 'kinks:kink_list_edit' kinklist.id %}">edit</a>
+    <footer>
+        <a href="#" onclick="navigator.clipboard.writeText(document.location).then(() => this.innerText += ' again').catch(() => this.innerText = 'cannot ' + this.innerText); return false;">copy URL</a>
+        |
+        <a href="{% url 'kinks:kink_list_edit' kinklist.id %}">edit</a>
+    </footer>
 {% endblock %}
