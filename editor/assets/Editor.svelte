@@ -1,7 +1,6 @@
 <script>
     import TabSelector from "./TabSelector.svelte";
     import EditorTab from "./EditorTab.svelte";
-    import CustomTab from "./CustomTab.svelte";
     import SaveTab from "./SaveTab.svelte";
     import { dbData, columns } from "./index.js";
 
@@ -93,7 +92,7 @@
 
 <article>
     <TabSelector
-        options={[{ component: EditorTab, label: 'Editor' }, { component: CustomTab, label: 'Custom' }, { component: SaveTab, label: 'Save' }]}
+        options={[{ component: EditorTab, label: 'Editor' }, { component: SaveTab, label: 'Save' }]}
         {dragstart}
         {dragover}
         {drop}
