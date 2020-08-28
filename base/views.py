@@ -4,7 +4,7 @@ from django.utils.decorators import method_decorator
 from django.views import generic
 
 from kinks.models import Kink, KinkList
-from .middleware import ignore_age_gate
+from . import ignore_age_gate
 
 
 def home_view(request):
