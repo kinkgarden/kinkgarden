@@ -31,6 +31,10 @@
         display: block;
     }
 
+    button:not(:disabled) {
+        cursor: pointer;
+    }
+
     .tab-content {
         flex: 1 1 auto;
         position: relative;

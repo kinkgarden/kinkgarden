@@ -40,13 +40,7 @@
             class="category"
             class:selected={selectedCategory === null}
             on:click={(_) => (selectedCategory = null)}>
-            all kinks
-        </div>
-        <div
-            class="category"
-            class:selected={selectedCategory === 'custom'}
-            on:click={(_) => (selectedCategory = 'custom')}>
-            custom kinks
+            All Kinks
         </div>
         {#each categories as category}
             <div
