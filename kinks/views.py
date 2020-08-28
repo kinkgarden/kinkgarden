@@ -35,6 +35,8 @@ class KinkListView(PasswordProtectedMixin, generic.DetailView):
     template_name = "kinks/list.html"
     password_field = "view-password"
     password_form_template = "kinks/enter_view_password.html"
+    slug_field = "short_link"
+    slug_url_kwarg = "short_link"
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

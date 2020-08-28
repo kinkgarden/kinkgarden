@@ -43,10 +43,13 @@ class KinkList(models.Model):
     view_password = models.CharField(max_length=128, blank=True)
     edit_password = models.CharField(max_length=128, blank=True)
     example = models.BooleanField(default=False)
+    short_link = models.CharField(max_length=32, blank=True, default="")
 
     def get_absolute_url(self):
         from django.urls import reverse
 
+        if len(self.short_link) > 0:
+            return reverse("kinks:kink_list_by_short_link", args=(self.short_link,))
         return reverse("kinks:kink_list", args=(self.id,))
 
     @property
