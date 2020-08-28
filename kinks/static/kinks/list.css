@@ -1,5 +1,6 @@
 html {
     height: 100%;
+    overflow-y: hidden;
     --page-width: 100vw;
 
     --hue-heart: 179.2;
@@ -10,6 +11,7 @@ html {
 
 body {
     height: 100%;
+    overflow-y: hidden;
     display: flex;
     flex-flow: column nowrap;
     max-width: unset;
