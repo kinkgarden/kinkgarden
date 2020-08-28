@@ -22,7 +22,7 @@ class AgeGateMiddleware:
     def __call__(self, request: HttpRequest):
         return self.get_response(request)
 
-    def process_view(self, request, view_func, view_args, view_kwargs):
+    def process_view(self, request: HttpRequest, view_func, view_args, view_kwargs):
         if getattr(view_func, "ignore_age_gate", False):
             return None
         if getattr(request, "age_gate_accepted", False):
@@ -33,6 +33,6 @@ class AgeGateMiddleware:
         if age_gate_response is not None:
             return age_gate_response
         request.age_gate_accepted = True
-        response: HttpResponse = self.get_response(request)
+        response: HttpResponse = redirect(request.path_info)
         response.set_cookie("age-gate-accepted", "yes", max_age=999999999)
         return response
