@@ -86,7 +86,7 @@
         position: relative;
 
         --icon-rows: 2;
-        --icon-columns: calc(4 / var(--icon-rows));
+        --icon-columns: 2;
 
         --icon-size: calc(28px / var(--icon-rows));
         --margin-size: 1px;
@@ -139,6 +139,7 @@
     @media (max-width: 90em) {
         .kink {
             --icon-rows: 1;
+            --icon-columns: 4;
         }
     }
 </style>
