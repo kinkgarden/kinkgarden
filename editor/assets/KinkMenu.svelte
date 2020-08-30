@@ -92,7 +92,9 @@
         --margin-size: 1px;
 
         --grid-size: calc(var(--icon-size) + 2 * var(--margin-size));
+    }
 
+    .kink p:first-child {
         padding-right: calc(var(--icon-columns) * var(--grid-size));
     }
 
