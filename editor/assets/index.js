@@ -27,15 +27,3 @@ const app = new Editor({
         action: initData ? initData.action : undefined,
     },
 });
-
-function fixPageWidth() {
-    document.documentElement.style.setProperty(
-        "--page-width",
-        document.documentElement.clientWidth + "px"
-    );
-}
-
-setTimeout(fixPageWidth, 1);
-
-window.addEventListener("resize", fixPageWidth);
-document.addEventListener("domContentLoaded", fixPageWidth);

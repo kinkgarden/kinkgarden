@@ -83,13 +83,6 @@
     }
 </script>
 
-<style>
-    article {
-        display: flex;
-        flex-flow: row;
-    }
-</style>
-
 <article>
     <TabSelector
         options={[{ component: EditorTab, label: 'Editor' }, { component: SaveTab, label: 'Save' }]}

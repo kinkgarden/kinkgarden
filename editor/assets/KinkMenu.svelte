@@ -85,12 +85,15 @@
     .kink {
         position: relative;
 
-        --icon-size: 14px;
+        --icon-rows: 2;
+        --icon-columns: calc(4 / var(--icon-rows));
+
+        --icon-size: calc(28px / var(--icon-rows));
         --margin-size: 1px;
 
         --grid-size: calc(var(--icon-size) + 2 * var(--margin-size));
 
-        padding-right: calc(2 * var(--grid-size));
+        padding-right: calc(var(--icon-columns) * var(--grid-size));
     }
 
     .kink.selected > :not(.shortcuts) {
@@ -104,8 +107,8 @@
         right: 0;
 
         display: grid;
-        grid-template-columns: var(--grid-size) var(--grid-size);
-        grid-template-rows: var(--grid-size) var(--grid-size);
+        grid-template-columns: repeat(var(--icon-columns), var(--grid-size));
+        grid-template-rows: repeat(var(--icon-rows), var(--grid-size));
     }
 
     .kink .shortcut {
@@ -129,6 +132,12 @@
 
     input {
         font: inherit;
+    }
+
+    @media (max-width: 90em) {
+        .kink {
+            --icon-rows: 1;
+        }
     }
 </style>
 

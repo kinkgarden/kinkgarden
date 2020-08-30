@@ -1,7 +1,6 @@
 html {
     height: 100%;
     overflow-y: hidden;
-    --page-width: 100vw;
 
     --hue-heart: 179.2;
     --hue-check: 102.2;
@@ -32,10 +31,8 @@ main > article {
     flex: 1 0 0;
     height: 0;
     position: relative;
-    left: calc((var(--body-width) - var(--page-width)) / 2);
     display: flex;
     flex-flow: row nowrap;
-    width: var(--page-width);
     justify-content: space-between;
     align-items: stretch;
     column-gap: 1rem;
@@ -85,12 +82,13 @@ svg.icon {
 }
 
 .kink:not(:last-child) {
-    border-bottom: 1.5px solid #2d1d2d;
+    border-bottom: 2px solid #644c67;
 }
 
 .kink p {
     margin: 0;
     padding: 0;
+    overflow-wrap: anywhere;
 }
 
 .kink p:first-child {
