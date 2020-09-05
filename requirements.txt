@@ -1,4 +1,4 @@
-Django[argon2]==3.1
+Django[argon2]==3.1.1
 pytz==2020.1
 psycopg2==2.8.5
 django-webpack-loader==0.7.0
