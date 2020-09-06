@@ -30,6 +30,16 @@
     let clearEditPassword = false;
 </script>
 
+<style>
+    form {
+        overflow-y: auto;
+    }
+
+    fieldset {
+        border: 1px solid currentColor;
+    }
+</style>
+
 <form method="post" action={saveFormAction} on:submit={submitForm}>
     <input type="hidden" name="kink-list-data" value="" />
     <input type="hidden" name="csrfmiddlewaretoken" value="" />

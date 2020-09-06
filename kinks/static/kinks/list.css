@@ -21,14 +21,14 @@ body > * {
 }
 
 main {
-    flex: 1 0 0;
+    flex: 1 1 0;
     height: 10px;
     display: flex;
     flex-flow: column;
 }
 
 main > article {
-    flex: 1 0 0;
+    flex: 1 1 0;
     height: 0;
     position: relative;
     display: flex;
@@ -36,6 +36,7 @@ main > article {
     justify-content: space-between;
     align-items: stretch;
     column-gap: 1rem;
+    min-height: 0;
 }
 
 main > article > div.column {
