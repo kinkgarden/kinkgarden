@@ -16,7 +16,7 @@
     }
 
     function addNew() {
-        let newID = Math.max(...$customData.map((x) => x.id)) + 1;
+        let newID = Math.max(0, ...$customData.map((x) => x.id)) + 1;
         let newCustom = {
             id: newID,
             name: "",
@@ -24,7 +24,6 @@
         };
         editing = newCustom;
         $customData = [...$customData, newCustom];
-        console.log($customData, editing);
     }
 </script>
 
