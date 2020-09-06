@@ -68,7 +68,8 @@ class KinkListModelTests(TestCase):
         self.assertListEqual(actual_columns[2][1], [])
         self.assertEqual(actual_columns[3][0], "no")
         self.assertListEqual(
-            actual_columns[3][1], [ConcreteKink(custom_name, custom_description)]
+            actual_columns[3][1],
+            [ConcreteKink(f"(Custom) {custom_name}", custom_description)],
         )
 
 
@@ -87,7 +88,7 @@ class KinkListViewTests(TestCase):
 
         response = self.client.get(kink_list.get_absolute_url())
         self.assertContains(response, standard_name)
-        self.assertContains(response, custom_name)
+        self.assertContains(response, f"(Custom) {custom_name}")
 
     def test_list_with_password_is_private(self):
         view_password = "insecure"
@@ -355,11 +356,13 @@ class KinkListEditTests(TestCase):
         )
         self.assertEqual(actual_columns[2][0], "tilde")
         self.assertListEqual(
-            actual_columns[2][1], [ConcreteKink(custom_name, custom_description)]
+            actual_columns[2][1],
+            [ConcreteKink(f"(Custom) {custom_name}", custom_description)],
         )
         self.assertEqual(actual_columns[3][0], "no")
         self.assertListEqual(
-            actual_columns[3][1], [ConcreteKink(custom_name + " 3", custom_description)]
+            actual_columns[3][1],
+            [ConcreteKink(f"(Custom) {custom_name} 3", custom_description)],
         )
 
     def test_nonexistent_list_deniable(self):

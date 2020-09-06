@@ -64,7 +64,7 @@ class KinkList(models.Model):
             )
         for kink in custom_kinks:
             column_data[KinkListColumn(kink.column)].append(
-                ConcreteKink(kink.custom_name, kink.custom_description)
+                ConcreteKink("(Custom) " + kink.custom_name, kink.custom_description)
             )
 
         return [
