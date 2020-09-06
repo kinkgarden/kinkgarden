@@ -144,6 +144,23 @@ class KinkListViewTests(TestCase):
         )
         self.assertContains(response, "Incorrect password", status_code=403)
 
+    def test_admin_delete_flag_hides_custom(self):
+        (
+            custom_description,
+            custom_name,
+            kink_list,
+            standard_description,
+            standard_name,
+        ) = make_test_data()
+
+        custom = kink_list.customkinklistentry_set.get()
+        custom.admin_delete = True
+        custom.save()
+
+        response = self.client.get(kink_list.get_absolute_url())
+        self.assertContains(response, standard_name)
+        self.assertNotContains(response, custom_name)
+
 
 class KinkListCreateTests(TestCase):
     def setUp(self):

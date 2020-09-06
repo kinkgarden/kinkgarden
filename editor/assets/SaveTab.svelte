@@ -1,12 +1,26 @@
 <script>
     import Cookies from "js-cookie";
-    import { columns } from "./index.js";
+    import { columns, customData } from "./index.js";
 
     export let saveFormAction;
+    export let fetchKink;
 
     function submitForm(event) {
         const form = event.currentTarget;
-        form.elements["kink-list-data"].value = JSON.stringify($columns);
+
+        // we need to put the custom data back into the columns array.
+        let submitColumns = $columns.map(({ name, kinks }) => ({
+            name,
+            kinks: kinks.map((kink) => {
+                if (kink.custom) {
+                    return fetchKink(kink, $customData);
+                } else {
+                    return { ...kink };
+                }
+            }),
+        }));
+
+        form.elements["kink-list-data"].value = JSON.stringify(submitColumns);
         form.elements["csrfmiddlewaretoken"].value = Cookies.get("csrftoken");
     }
 

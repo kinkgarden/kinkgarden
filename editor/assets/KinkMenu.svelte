@@ -1,24 +1,32 @@
 <script>
-    import { dbData, columns } from "./index.js";
+    import { dbData, columns, customData } from "./index.js";
     import Fuse from "fuse.js";
     export let selectedCategory;
     export let dragstart, dragover, drop;
 
-    const fuse = new Fuse($dbData.kinks, {
+    const fuse = new Fuse([], {
         keys: ["name", "description"],
     });
+
+    let standardKinks = dbData.kinks.map((k) => ({ custom: false, ...k }));
+    let customKinks;
+    $: customKinks = $customData.map((k) => ({ custom: true, ...k }));
+    let allKinks;
+    $: {
+        allKinks = [...standardKinks, ...customKinks];
+        fuse.setCollection(allKinks);
+    }
 
     let searchText = "";
 
     let selectedKinks;
     $: {
         if (selectedCategory === null) {
-            selectedKinks = $dbData.kinks;
+            selectedKinks = allKinks;
         } else if (selectedCategory === "custom") {
-            // TODO what do
-            selectedKinks = [];
+            selectedKinks = customKinks;
         } else {
-            selectedKinks = $dbData.kinks.filter(
+            selectedKinks = standardKinks.filter(
                 (k) => k.category_id === selectedCategory
             );
         }
@@ -36,29 +44,37 @@
     let kinkColumn;
     $: {
         kinkColumn = {};
+        kinkColumn[true] = {};
+        kinkColumn[false] = {};
         for (
             let columnIndex = 0;
             columnIndex < $columns.length;
             columnIndex++
         ) {
             for (let kink of $columns[columnIndex].kinks) {
-                kinkColumn[kink.id] = columnIndex;
+                kinkColumn[kink.custom][kink.id] = columnIndex;
             }
         }
     }
 
-    function toggleColumn(id, column) {
-        if ($columns[column].kinks.some((k) => k.id === id)) {
+    function toggleColumn(id, column, custom) {
+        if (
+            $columns[column].kinks.some(
+                (k) => k.custom === custom && k.id === id
+            )
+        ) {
             $columns[column].kinks = $columns[column].kinks.filter(
-                (k) => k.id !== id
+                (k) => k.custom !== custom || k.id !== id
             );
         } else {
             $columns.forEach((c) => {
-                c.kinks = c.kinks.filter((k) => k.id !== id);
+                c.kinks = c.kinks.filter(
+                    (k) => k.custom !== custom || k.id !== id
+                );
             });
             $columns[column].kinks = [
                 ...$columns[column].kinks,
-                { custom: false, id },
+                { custom, id },
             ];
         }
     }
@@ -158,45 +174,46 @@
         {#each searchedKinks as kink}
             <div
                 class="kink"
-                class:selected={kinkColumn[kink.id] !== undefined}
-                draggable={kinkColumn[kink.id] === undefined ? 'true' : 'false'}
+                class:selected={kinkColumn[kink.custom][kink.id] !== undefined}
+                draggable={kinkColumn[kink.custom][kink.id] === undefined ? 'true' : 'false'}
                 on:dragstart={(event) => dragstart(event, true)}
-                data-id={kink.id}>
+                data-id={kink.id}
+                data-custom={kink.custom}>
                 <p title={kink.description}>{kink.name}</p>
                 <p class="description">{kink.description}</p>
                 <div class="shortcuts">
                     <button
                         class="shortcut"
-                        class:selected={kinkColumn[kink.id] === 0}
+                        class:selected={kinkColumn[kink.custom][kink.id] === 0}
                         data-target="0"
-                        on:click={(_) => toggleColumn(kink.id, 0)}>
+                        on:click={(_) => toggleColumn(kink.id, 0, kink.custom)}>
                         <svg class="icon heart">
                             <use xlink:href="#heart" />
                         </svg>
                     </button>
                     <button
                         class="shortcut"
-                        class:selected={kinkColumn[kink.id] === 1}
+                        class:selected={kinkColumn[kink.custom][kink.id] === 1}
                         data-target="1"
-                        on:click={(_) => toggleColumn(kink.id, 1)}>
+                        on:click={(_) => toggleColumn(kink.id, 1, kink.custom)}>
                         <svg class="icon check">
                             <use xlink:href="#check" />
                         </svg>
                     </button>
                     <button
                         class="shortcut"
-                        class:selected={kinkColumn[kink.id] === 2}
+                        class:selected={kinkColumn[kink.custom][kink.id] === 2}
                         data-target="2"
-                        on:click={(_) => toggleColumn(kink.id, 2)}>
+                        on:click={(_) => toggleColumn(kink.id, 2, kink.custom)}>
                         <svg class="icon tilde">
                             <use xlink:href="#tilde" />
                         </svg>
                     </button>
                     <button
                         class="shortcut"
-                        class:selected={kinkColumn[kink.id] === 3}
+                        class:selected={kinkColumn[kink.custom][kink.id] === 3}
                         data-target="3"
-                        on:click={(_) => toggleColumn(kink.id, 3)}>
+                        on:click={(_) => toggleColumn(kink.id, 3, kink.custom)}>
                         <svg class="icon no">
                             <use xlink:href="#no" />
                         </svg>

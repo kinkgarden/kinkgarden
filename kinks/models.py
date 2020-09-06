@@ -63,14 +63,18 @@ class KinkList(models.Model):
                 ConcreteKink(kink.kink.name, kink.kink.description)
             )
         for kink in custom_kinks:
-            column_data[KinkListColumn(kink.column)].append(
-                ConcreteKink(kink.custom_name, kink.custom_description)
-            )
+            if not kink.admin_delete:
+                column_data[KinkListColumn(kink.column)].append(
+                    ConcreteKink(kink.custom_name, kink.custom_description)
+                )
 
         return [
             (column_type.name.lower(), sorted(column_content, key=lambda x: x.name))
             for column_type, column_content in column_data.items()
         ]
+
+    def __str__(self):
+        return str(self.id)
 
 
 class KinkListEntry(models.Model):
@@ -89,12 +93,16 @@ class StandardKinkListEntry(KinkListEntry):
         Kink, on_delete=models.CASCADE, related_name="+", null=True, blank=True
     )
 
+    def __str__(self):
+        return str(self.list) + " - " + str(self.kink)
+
     class Meta:
         constraints = [
             models.UniqueConstraint(
                 fields=["list", "kink"], name="unique_standard_kinks"
             )
         ]
+        verbose_name_plural = "standard kink list entries"
 
 
 class CustomKinkListEntry(KinkListEntry):
@@ -102,9 +110,13 @@ class CustomKinkListEntry(KinkListEntry):
     custom_description = models.CharField(max_length=1000, blank=True)
     admin_delete = models.BooleanField(default=False)
 
+    def __str__(self):
+        return str(self.list) + " - " + str(self.custom_name)
+
     class Meta:
         constraints = [
             models.UniqueConstraint(
                 fields=["list", "custom_name"], name="unique_custom_kinks"
             )
         ]
+        verbose_name_plural = "custom kink list entries"

@@ -1,7 +1,7 @@
 <script>
     import { dbData } from "./index.js";
 
-    let categories = $dbData.categories;
+    let categories = dbData.categories;
     export let selectedCategory = null;
 </script>
 
@@ -41,6 +41,12 @@
             class:selected={selectedCategory === null}
             on:click={(_) => (selectedCategory = null)}>
             All Kinks
+        </div>
+        <div
+            class="category"
+            class:selected={selectedCategory === 'custom'}
+            on:click={(_) => (selectedCategory = 'custom')}>
+            Custom Kinks
         </div>
         {#each categories as category}
             <div

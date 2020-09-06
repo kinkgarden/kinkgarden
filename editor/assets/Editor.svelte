@@ -1,41 +1,24 @@
 <script>
     import TabSelector from "./TabSelector.svelte";
     import EditorTab from "./EditorTab.svelte";
+    import CustomTab from "./CustomTab.svelte";
     import SaveTab from "./SaveTab.svelte";
-    import { dbData, columns } from "./index.js";
+    import { dbData, columns, customData } from "./index.js";
 
-    function fetchKink(kink, dbData) {
-        if (kink.custom) {
-            return kink;
-        } else {
-            let { name, description, id } = dbData.kinks.find(
-                (k) => k.id === kink.id
-            );
-            return { custom: false, name, description, id };
-        }
+    function fetchKink(kink, kinkData) {
+        let { name, description, id } = kinkData.find((k) => k.id === kink.id);
+        return { custom: kink.custom, name, description, id };
     }
 
     export let action = "";
 
-    function isKinkUsed(kink) {
-        return $columns.some(({ kinks }) =>
-            kinks.some((k) => k.id === kink.id)
-        );
-    }
-    function isKinkUnused(kink) {
-        return $columns.every(({ kinks }) =>
-            kinks.every((k) => k.id !== kink.id)
-        );
-    }
-    function isKinkInColumn(kink, column) {
-        let kinks = $columns[column].kinks;
-        return kinks.some((k) => k.id === kink.id);
-    }
     let full_columns;
     $: {
         full_columns = $columns.map((column) => ({
             name: column.name,
-            kinks: column.kinks.map((x) => fetchKink(x, $dbData)),
+            kinks: column.kinks.map((x) =>
+                fetchKink(x, x.custom ? $customData : dbData.kinks)
+            ),
         }));
     }
 
@@ -48,8 +31,11 @@
         } else {
             event.dataTransfer.effectAllowed = "move";
         }
-        let id = event.target.dataset.id;
-        event.dataTransfer.setData("text/plain", id);
+        let kink = {
+            id: parseInt(event.target.dataset.id),
+            custom: event.target.dataset.custom === "true",
+        };
+        event.dataTransfer.setData("application/json", JSON.stringify(kink));
     }
 
     function dragover(event, column) {
@@ -60,13 +46,13 @@
     function drop(event, column) {
         if (column !== null) {
             const data = event.dataTransfer;
-            let id = parseInt(data.getData("text/plain"));
+            let { id, custom } = JSON.parse(data.getData("application/json"));
             // must defer so that if we drag to ourself we add after we remove
             // (there are almost certainly better ways to handle this)
             setTimeout(() => {
                 $columns[column].kinks = [
                     ...$columns[column].kinks,
-                    { custom: false, id },
+                    { custom, id },
                 ];
             });
         }
@@ -76,8 +62,9 @@
         const data = event.dataTransfer;
         if (data.dropEffect === "move" && column !== null) {
             let id = parseInt(event.target.dataset.id);
+            let custom = event.target.dataset.custom === "true";
             $columns[column].kinks = $columns[column].kinks.filter(
-                (k) => k.id !== id
+                (k) => k.id !== id || k.custom !== custom
             );
         }
     }
@@ -85,11 +72,12 @@
 
 <article>
     <TabSelector
-        options={[{ component: EditorTab, label: 'Editor' }, { component: SaveTab, label: 'Save' }]}
+        options={[{ component: EditorTab, label: 'Editor' }, { component: CustomTab, label: 'Custom' }, { component: SaveTab, label: 'Save' }]}
         {dragstart}
         {dragover}
         {drop}
-        saveFormAction={action} />
+        saveFormAction={action}
+        {fetchKink} />
     {#each full_columns as column, i}
         <div
             class="column"
@@ -107,7 +95,8 @@
                         draggable="true"
                         on:dragstart={(event) => dragstart(event, false)}
                         on:dragend={(event) => dragend(event, i)}
-                        data-id={kink.id}>
+                        data-id={kink.id}
+                        data-custom={kink.custom}>
                         <p title={kink.description}>{kink.name}</p>
                         <p class="description">{kink.description}</p>
                     </div>
