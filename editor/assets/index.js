@@ -24,6 +24,7 @@ if (initData !== undefined) {
                 delete kink.description;
                 kink.id = customID;
                 initCustoms.push({ id: customID, name, description });
+                customID++;
             }
         }
     }

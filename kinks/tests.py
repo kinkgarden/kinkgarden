@@ -5,7 +5,7 @@ from django.test import TestCase
 from django.urls import reverse
 from django.contrib.auth.hashers import make_password, check_password
 
-from .models import Kink, KinkList, KinkListColumn, ConcreteKink
+from .models import Kink, KinkList, KinkListColumn, ConcreteKink, CustomReject
 from base.tests import approve_age_gate
 
 
@@ -144,23 +144,6 @@ class KinkListViewTests(TestCase):
         )
         self.assertContains(response, "Incorrect password", status_code=403)
 
-    def test_admin_delete_flag_hides_custom(self):
-        (
-            custom_description,
-            custom_name,
-            kink_list,
-            standard_description,
-            standard_name,
-        ) = make_test_data()
-
-        custom = kink_list.customkinklistentry_set.get()
-        custom.admin_delete = True
-        custom.save()
-
-        response = self.client.get(kink_list.get_absolute_url())
-        self.assertContains(response, standard_name)
-        self.assertNotContains(response, custom_name)
-
 
 class KinkListCreateTests(TestCase):
     def setUp(self):
@@ -202,6 +185,44 @@ class KinkListCreateTests(TestCase):
         response = self.client.get(kink_list.get_absolute_url())
         self.assertContains(response, standard_name)
         self.assertContains(response, custom_name)
+
+    def test_create_list_reject_ignores_rejections(self):
+        standard_kink, standard_description, standard_name = make_standard_kink()
+        custom_description, custom_name = make_custom_kink()
+        CustomReject.objects.create(name=custom_name)
+        response = self.client.post(
+            reverse("kinks:kink_list_new"),
+            {
+                "view-password": "",
+                "edit-password": "",
+                "kink-list-data": json.dumps(
+                    [
+                        {
+                            "name": "heart",
+                            "kinks": [{"custom": False, "id": standard_kink.id}],
+                        },
+                        {"name": "check", "kinks": []},
+                        {"name": "tilde", "kinks": []},
+                        {
+                            "name": "no",
+                            "kinks": [
+                                {
+                                    "custom": True,
+                                    "name": custom_name,
+                                    "description": custom_description,
+                                }
+                            ],
+                        },
+                    ]
+                ),
+            },
+        )
+        kink_list = KinkList.objects.get()
+        self.assertRedirects(response, kink_list.get_absolute_url())
+
+        response = self.client.get(kink_list.get_absolute_url())
+        self.assertContains(response, standard_name)
+        self.assertNotContains(response, custom_name)
 
     def test_create_list_passwords_work(self):
         view_password = "insecure"
@@ -497,3 +518,56 @@ class KinkListEditTests(TestCase):
 
         self.assertTrue(check_password(view_password, kink_list.view_password))
         self.assertTrue(check_password(edit_password, kink_list.edit_password))
+
+    def test_edit_reject_ignores_rejections(self):
+        edit_password = "insecure"
+        list_args = dict(edit_password=make_password(edit_password))
+        (
+            custom_description,
+            custom_name,
+            kink_list,
+            standard_description,
+            standard_name,
+        ) = make_test_data(list_args)
+
+        rejected_name = "Something Heinous"
+        CustomReject.objects.create(name=rejected_name)
+
+        edit_url = reverse("kinks:kink_list_edit", args=(kink_list.id,))
+        self.client.get(edit_url)
+        response = self.client.post(edit_url, {"edit-password": edit_password})
+        self.assertTemplateUsed(response, "editor/editor.html")
+
+        response = self.client.post(
+            reverse("kinks:kink_list_save", args=(kink_list.id,)),
+            {
+                "view-password": "",
+                "edit-password": "",
+                "kink-list-data": json.dumps(
+                    [
+                        {"name": "heart", "kinks": [],},
+                        {"name": "check", "kinks": [],},
+                        {
+                            "name": "tilde",
+                            "kinks": [
+                                {
+                                    "custom": True,
+                                    "name": rejected_name,
+                                    "description": "",
+                                }
+                            ],
+                        },
+                        {"name": "no", "kinks": [],},
+                    ]
+                ),
+            },
+        )
+        self.assertRedirects(response, kink_list.get_absolute_url())
+
+        actual_columns = kink_list.columns
+        self.assertListEqual(
+            actual_columns[0][1], [],
+        )
+        self.assertListEqual(actual_columns[1][1], [])
+        self.assertListEqual(actual_columns[2][1], [])
+        self.assertListEqual(actual_columns[3][1], [])

@@ -10,7 +10,13 @@ from django.views.decorators.debug import sensitive_variables, sensitive_post_pa
 from django.urls import reverse
 from django.contrib.auth.hashers import check_password, make_password
 
-from .models import KinkList, KinkListColumn, StandardKinkListEntry, CustomKinkListEntry
+from .models import (
+    KinkList,
+    KinkListColumn,
+    StandardKinkListEntry,
+    CustomKinkListEntry,
+    CustomReject,
+)
 from editor.views import EditorView
 
 
@@ -89,6 +95,8 @@ class KinkListCreate(EditorView):
             for kink in column["kinks"]:
                 if kink["custom"]:
                     name = kink["name"]
+                    if CustomReject.objects.filter(name__iexact=name).exists():
+                        continue
                     description = kink["description"]
                     entry = CustomKinkListEntry(
                         custom_name=name,
@@ -211,6 +219,8 @@ class KinkListSave(generic.View):
             for kink in column["kinks"]:
                 if kink["custom"]:
                     name = kink["name"]
+                    if CustomReject.objects.filter(name__iexact=name).exists():
+                        continue
                     description = kink["description"]
                     entry, _ = kink_list.customkinklistentry_set.get_or_create(
                         custom_name=name,

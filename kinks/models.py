@@ -63,10 +63,9 @@ class KinkList(models.Model):
                 ConcreteKink(kink.kink.name, kink.kink.description)
             )
         for kink in custom_kinks:
-            if not kink.admin_delete:
-                column_data[KinkListColumn(kink.column)].append(
-                    ConcreteKink(kink.custom_name, kink.custom_description)
-                )
+            column_data[KinkListColumn(kink.column)].append(
+                ConcreteKink(kink.custom_name, kink.custom_description)
+            )
 
         return [
             (column_type.name.lower(), sorted(column_content, key=lambda x: x.name))
@@ -108,7 +107,6 @@ class StandardKinkListEntry(KinkListEntry):
 class CustomKinkListEntry(KinkListEntry):
     custom_name = models.CharField(max_length=200, blank=True)
     custom_description = models.CharField(max_length=1000, blank=True)
-    admin_delete = models.BooleanField(default=False)
 
     def __str__(self):
         return str(self.list) + " - " + str(self.custom_name)
@@ -120,3 +118,10 @@ class CustomKinkListEntry(KinkListEntry):
             )
         ]
         verbose_name_plural = "custom kink list entries"
+
+
+class CustomReject(models.Model):
+    name = models.CharField(max_length=200, unique=True)
+
+    def __str__(self):
+        return self.name
