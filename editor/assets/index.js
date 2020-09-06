@@ -10,7 +10,7 @@ const initDataElement = document.getElementById("init-data");
 const initData = initDataElement && JSON.parse(initDataElement.textContent);
 
 let initColumns, initCustoms;
-if (initData !== undefined) {
+if (initData) {
     initColumns = initData.columns;
     initCustoms = [];
 
