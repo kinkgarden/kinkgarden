@@ -1,6 +1,6 @@
 import json
 
-from django.core.exceptions import PermissionDenied
+from django.core.exceptions import PermissionDenied, SuspiciousOperation
 from django.db import transaction
 from django.http import HttpResponseRedirect, Http404
 from django.shortcuts import render
@@ -76,6 +76,9 @@ class KinkListView(PasswordProtectedMixin, generic.DetailView):
 )
 class KinkListCreate(EditorView):
     def post(self, request, *args, **kwargs):
+        for key in ("kink-list-data", "view-password", "edit-password"):
+            if key not in request.POST:
+                raise SuspiciousOperation()
         list_data = json.loads(request.POST["kink-list-data"])
         view_password = request.POST["view-password"]
         if len(view_password) > 0:
@@ -184,6 +187,9 @@ class KinkListEdit(PasswordProtectedMixin, EditorView):
 )
 class KinkListSave(generic.View):
     def post(self, request, *args, **kwargs):
+        for key in ("kink-list-data", "view-password", "edit-password"):
+            if key not in request.POST:
+                raise SuspiciousOperation()
         pop_edit_target(request.session, str(kwargs["pk"]))
         list_data = json.loads(request.POST["kink-list-data"])
         kink_list = KinkList.objects.get(id=kwargs["pk"])
