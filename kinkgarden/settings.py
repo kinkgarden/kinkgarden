@@ -11,7 +11,7 @@ https://docs.djangoproject.com/en/2.1/ref/settings/
 """
 
 import os
-from pathlib import Path
+import django_heroku
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -20,17 +20,20 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.1/howto/deployment/checklist/
 
+# SECRET_KEY = ''
 if "SECRET_KEY" in os.environ:
     SECRET_KEY = os.environ["SECRET_KEY"]
-if Path("/run/secrets/secret-key").exists():
-    with open("/run/secrets/secret-key", "r") as f:
-        SECRET_KEY = f.readline()
 
-if os.environ.get("DEBUG", "false") == "true":
-    DEBUG = True
+# DEBUG = True
+if "DEBUG_UNTIL" in os.environ:
+    from datetime import datetime
 
-if "ALLOWED_HOSTS" in os.environ:
-    ALLOWED_HOSTS = os.environ["ALLOWED_HOSTS"].split(",")
+    until = datetime.fromisoformat(os.environ["DEBUG_UNTIL"])
+    now = datetime.utcnow()
+    if now < until:
+        DEBUG = True
+
+# ALLOWED_HOSTS = []
 
 
 # Application definition
@@ -94,17 +97,8 @@ WEBPACK_LOADER = {
 
 # Database
 # https://docs.djangoproject.com/en/2.1/ref/settings/#databases
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.postgresql",
-        "NAME": "postgres",
-        "USER": "postgres",
-        "PASSWORD": "N/A",
-        "HOST": "db",
-        "PORT": "5432",
-        "CONN_MAX_AGE": None,
-    }
-}
+# lives in local_settings.py
+
 
 # Password validation
 # https://docs.djangoproject.com/en/2.1/ref/settings/#auth-password-validators
@@ -142,9 +136,7 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
 
-STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 STATIC_URL = "/static/"
-os.makedirs(STATIC_ROOT, exist_ok=True)
 
 # Mail setup if given in environment
 if "EMAIL_HOST" in os.environ:
@@ -183,3 +175,12 @@ LOGGING = {
     },
     "loggers": {"testlogger": {"handlers": ["console"], "level": "INFO",}},
 }
+
+# let local_settings override what's here
+try:
+    from .local_settings import *
+except ImportError:
+    pass
+
+if "CI" not in os.environ:
+    django_heroku.settings(locals())

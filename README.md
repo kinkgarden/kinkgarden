@@ -22,22 +22,33 @@ slurs, or tastelessly fetishizing marginalized people.
 ## developing
 
 1. install [python](https://www.python.org) and
-   [Docker Desktop](https://www.docker.com/get-started)
+   [node.js](https://nodejs.org/en/)
 2. clone this repository
-3. prepare secrets:
+3. install dependencies:
     ```shell script
-    docker run --rm python:alpine python -c "import string,random;print(''.join(random.choices(string.ascii_letters,k=30)))" > ./secrets/secret-key
+    pip install -r requirements.txt
+    npm install
     ```
-4. run the server:
+4. copy `kinkgarden/ci_settings.py` to `kinkgarden/local_settings.py` and delete
+   the first line (`from .settings import *`)
+5. build the editor:
     ```shell script
-    docker-compose up --build
+    npm run build -- --mode=development
     ```
-5. give yourself an admin account to make local test data:
+    (if you're going to be editing it, use `watch` instead of `build` and open a
+    new terminal for the next steps)
+6. set up the database and give yourself an admin account to make local test
+   data:
     ```shell script
-    docker-compose exec django python manage.py createsuperuser
+    python manage.py migrate
+    python manage.py createsuperuser
+    ```
+7. run the server:
+    ```shell script
+    python manage.py runserver
     ```
 
-in theory, that should get you going, with the server on http://localhost:8000/.
+in theory, that should get you going.
 
 we use [black](https://github.com/psf/black) and
 [prettier](https://prettier.io/) to manage code formatting. you can set up their
