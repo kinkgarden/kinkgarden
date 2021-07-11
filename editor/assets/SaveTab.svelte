@@ -4,6 +4,10 @@
 
     export let saveFormAction;
     export let fetchKink;
+    export let patreonClientId;
+    export let patreonOk;
+    export let patreonError;
+    export let listId;
 
     function submitForm(event) {
         const form = event.currentTarget;
@@ -28,6 +32,7 @@
     $: isNew = saveFormAction === "";
 
     let clearEditPassword = false;
+    let redirectUrl = window.location.origin + "/patreon/redirect";
 </script>
 
 <style>
@@ -88,5 +93,36 @@
                 bind:checked={clearEditPassword} />
         </label>
     </fieldset>
+    {#if !isNew}
+        <fieldset>
+            <label>
+                Short Link
+                {#if patreonOk}
+                    <input type="text" name="short-link" />
+                {:else if patreonError}error: {patreonError}.{/if}
+            </label>
+            <p>
+                Pledge to
+                <a href="https://www.patreon.com/boringcactus">
+                    boringcactus's Patreon
+                </a>
+                at the $5/month tier and then
+                <a
+                    href="https://www.patreon.com/oauth2/authorize?response_type=code&client_id={patreonClientId}&redirect_uri={redirectUrl}&scope=identity&state={listId}">
+                    Log In with Patreon (will lose unsaved changes)
+                </a>
+                to set a short link for your kink list. For example, you could
+                set the short link to
+                <code>cutefox</code>
+                to have your kink list accessible at
+                <code>kink.garden/cutefox</code>
+                .
+            </p>
+            <label>
+                Clear short link, if one was set:
+                <input type="checkbox" name="clear-short-link" />
+            </label>
+        </fieldset>
+    {/if}
     <input type="submit" value="Save" />
 </form>

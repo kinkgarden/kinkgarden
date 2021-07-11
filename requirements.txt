@@ -7,3 +7,4 @@ coverage==5.3
 django_coverage_plugin==1.8.0
 black==19.10b0
 gunicorn==19.9.0; platform_system != 'Windows'
+requests==2.25.1

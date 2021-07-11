@@ -8,6 +8,7 @@ urlpatterns = [
     path("new", views.KinkListCreate.as_view(), name="kink_list_new"),
     path("<uuid:pk>/edit", views.KinkListEdit.as_view(), name="kink_list_edit"),
     path("<uuid:pk>/save", views.KinkListSave.as_view(), name="kink_list_save"),
+    path("patreon/redirect", views.PatreonRedirect.as_view(), name="patreon_redirect"),
     path(
         "<slug:short_link>",
         views.KinkListView.as_view(),

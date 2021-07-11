@@ -11,6 +11,10 @@
     }
 
     export let action = "";
+    export let patreonClientId = "";
+    export let patreonOk = false;
+    export let patreonError = undefined;
+    export let listId = "";
 
     let full_columns;
     $: {
@@ -77,7 +81,11 @@
         {dragover}
         {drop}
         saveFormAction={action}
-        {fetchKink} />
+        {fetchKink}
+        {patreonClientId}
+        {patreonOk}
+        {patreonError}
+        {listId} />
     {#each full_columns as column, i}
         <div
             class="column"

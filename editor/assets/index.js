@@ -46,5 +46,9 @@ const app = new Editor({
     target: document.querySelector("main"),
     props: {
         action: initData ? initData.action : undefined,
+        patreonClientId: initData ? initData.patreonClientId : undefined,
+        listId: initData ? initData.listId : undefined,
+        patreonOk: initData ? initData.patreonOk : undefined,
+        patreonError: initData ? initData.patreonError : undefined,
     },
 });

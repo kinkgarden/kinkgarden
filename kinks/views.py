@@ -1,14 +1,16 @@
 import json
 
+from django.conf import settings
 from django.core.exceptions import PermissionDenied, SuspiciousOperation
 from django.db import transaction
-from django.http import HttpResponseRedirect, Http404
+from django.http import HttpResponseRedirect, Http404, HttpRequest
 from django.shortcuts import render
 from django.utils.decorators import method_decorator
 from django.views import generic
 from django.views.decorators.debug import sensitive_variables, sensitive_post_parameters
-from django.urls import reverse
+from django.urls import reverse, resolve, Resolver404
 from django.contrib.auth.hashers import check_password, make_password
+import requests
 
 from .models import (
     KinkList,
@@ -104,7 +106,7 @@ class KinkListCreate(EditorView):
                     entry = CustomKinkListEntry(
                         custom_name=name,
                         custom_description=description,
-                        **entry_metadata
+                        **entry_metadata,
                     )
                     entry.save()
                 else:
@@ -173,8 +175,86 @@ class KinkListEdit(PasswordProtectedMixin, EditorView):
                 {"name": x.name.lower(), "kinks": k} for x, k in column_data.items()
             ],
             "action": reverse("kinks:kink_list_save", args=(self.object.id,)),
+            "patreonClientId": settings.PATREON["client_id"],
+            "listId": kwargs["pk"],
         }
+        if self.request.session.get("patreon-ok", False):
+            context["init_data"]["patreonOk"] = True
+        if "patreon-error" in self.request.session:
+            context["init_data"]["patreonError"] = self.request.session["patreon-error"]
         return context
+
+
+@method_decorator(
+    sensitive_variables("tokens_response", "tokens", "access_token"), name="dispatch",
+)
+class PatreonRedirect(generic.View):
+    def get(self, request: HttpRequest, *args, **kwargs):
+        code = request.GET["code"]
+        list_id = request.GET["state"]
+
+        client_id = settings.PATREON["client_id"]
+        client_secret = settings.PATREON["client_secret"]
+
+        tokens_response = requests.post(
+            "https://www.patreon.com/api/oauth2/token",
+            data={
+                "code": code,
+                "grant_type": "authorization_code",
+                "client_id": client_id,
+                "client_secret": client_secret,
+                "redirect_uri": request.build_absolute_uri(request.path),
+            },
+            headers={"User-Agent": "kink.garden patreon integration"},
+        )
+        tokens = tokens_response.json()
+        tokens_response.raise_for_status()
+        access_token = tokens["access_token"]
+
+        memberships_response = requests.get(
+            "https://www.patreon.com/api/oauth2/v2/identity",
+            params={
+                "include": "memberships.currently_entitled_tiers,memberships.campaign"
+            },
+            headers={
+                "Authorization": f"Bearer {access_token}",
+                "User-Agent": "kink.garden patreon integration",
+            },
+        )
+        memberships = memberships_response.json()
+        memberships_response.raise_for_status()
+        target_campaign_id = settings.PATREON["campaign"]
+        target_tier_id = settings.PATREON["short_link_tier"]
+        found_campaign = False
+        found_tier = False
+        for membership in memberships["included"]:
+            if membership["type"] == "member":
+                if (
+                    membership["relationships"]["campaign"]["data"]["id"]
+                    == target_campaign_id
+                ):
+                    found_campaign = True
+                    for tier in membership["relationships"]["currently_entitled_tiers"][
+                        "data"
+                    ]:
+                        if tier["id"] == target_tier_id:
+                            found_tier = True
+                            break
+                    break
+
+        if found_campaign and found_tier:
+            request.session["patreon-ok"] = True
+        elif found_campaign:
+            request.session["patreon-error"] = "wrong tier"
+        else:
+            request.session["patreon-error"] = "not pledged"
+
+        if str(list_id) in request.session.get("edit-target", []):
+            return HttpResponseRedirect(
+                reverse("kinks:kink_list_edit", args=(list_id,))
+            )
+        else:
+            return HttpResponseRedirect("/")
 
 
 @method_decorator(
@@ -186,7 +266,7 @@ class KinkListEdit(PasswordProtectedMixin, EditorView):
     name="dispatch",
 )
 class KinkListSave(generic.View):
-    def post(self, request, *args, **kwargs):
+    def post(self, request: HttpRequest, *args, **kwargs):
         for key in ("kink-list-data", "view-password", "edit-password"):
             if key not in request.POST:
                 raise SuspiciousOperation()
@@ -203,6 +283,19 @@ class KinkListSave(generic.View):
             kink_list.edit_password = make_password(edit_password)
         elif request.POST.get("clear-edit-password", "") == "on":
             kink_list.edit_password = ""
+        short_link = request.POST.get("short-link", "")
+        if short_link != "" and request.session.get("patreon-ok", False):
+            # 1. make sure we aren't duplicating short links
+            if not KinkList.objects.filter(short_link=short_link).exists():
+                # 2. make sure we aren't overlapping with an internal URL
+                try:
+                    resolve(
+                        reverse("kinks:kink_list_by_short_link", args=(short_link,))
+                    )
+                except Resolver404:
+                    kink_list.short_link = short_link
+        elif request.POST.get("clear-short-link", "") == "on":
+            kink_list.short_link = ""
         kink_list.save()
 
         # this probably could be better.
