@@ -288,11 +288,10 @@ class KinkListSave(generic.View):
             # 1. make sure we aren't duplicating short links
             if not KinkList.objects.filter(short_link=short_link).exists():
                 # 2. make sure we aren't overlapping with an internal URL
-                try:
-                    resolve(
-                        reverse("kinks:kink_list_by_short_link", args=(short_link,))
-                    )
-                except Resolver404:
+                match = resolve(
+                    reverse("kinks:kink_list_by_short_link", args=(short_link,))
+                )
+                if match.url_name == "kink_list_by_short_link":
                     kink_list.short_link = short_link
         elif request.POST.get("clear-short-link", "") == "on":
             kink_list.short_link = ""
